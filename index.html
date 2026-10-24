@@ -424,11 +424,10 @@ footer a { color: inherit; }
 </footer>
 
 <script>
-const VERSION = "1.21.4";
 const ASSET_BASE =
-  `https://mcasset.cloud/${VERSION}/assets/minecraft/textures/item/`;
+  "https://project-crafting.github.io/minecraft-auto-updated-textures-api/items/";
 
-const texture = id => ASSET_BASE + id + ".png";
+const texture = id => ASSET_BASE + encodeURIComponent(id) + ".png";
 
 const items = [
   {
@@ -594,8 +593,11 @@ function makeImage(id, className="item-img") {
   img.alt = id;
   img.loading = "lazy";
   img.onerror = () => {
-    img.style.visibility = "hidden";
-    img.alt = "이미지를 불러올 수 없습니다";
+    img.style.visibility = "visible";
+    img.removeAttribute("src");
+    img.alt = "이미지 없음: " + id;
+    img.style.background = "#f1f3ed";
+    img.style.borderRadius = "6px";
   };
   return img;
 }
@@ -734,6 +736,14 @@ function showRecipe(item) {
   $("recipeDesc").textContent = item.desc;
   $("outputImage").src = imageUrl(item.id);
   $("outputImage").alt = item.name;
+  $("recipeImage").onerror = () => {
+    $("recipeImage").removeAttribute("src");
+    $("recipeImage").alt = "이미지 없음";
+  };
+  $("outputImage").onerror = () => {
+    $("outputImage").removeAttribute("src");
+    $("outputImage").alt = "이미지 없음";
+  };
   $("note").textContent = item.note;
 
   const grid = $("craftGrid");
