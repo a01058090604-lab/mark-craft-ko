@@ -56,6 +56,17 @@ h1 span{color:var(--green);text-shadow:0 3px 0 #385329}
 .quick-item:hover{transform:translateY(-3px);border-color:#a4d64f;box-shadow:0 7px 0 #070a08,0 0 22px #9cdb3815}
 .quick-item img{display:block;width:48px;height:48px;object-fit:contain;image-rendering:pixelated;margin:0 auto 10px}
 .quick-item span{font-size:11px;font-weight:850}
+
+.category-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+.category-card{min-width:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:112px;padding:13px 5px;background:linear-gradient(145deg,#1b251d,#111713);border:1px solid #344333;border-radius:10px;box-shadow:0 4px 0 #070a08;cursor:pointer;transition:.18s}
+.category-card:before{content:"";position:absolute;left:0;top:0;width:23px;height:3px;background:var(--green)}
+.category-card:hover,.category-card.active{transform:translateY(-2px);border-color:var(--green);background:linear-gradient(145deg,#263a25,#151e16);box-shadow:0 5px 0 #070a08,0 0 18px #9cdb3818}
+.category-card img{width:49px;height:49px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 4px 3px #0008)}
+.category-card span{font-size:11px;font-weight:850}
+.category-note{margin-top:10px;color:var(--muted);font-size:10px;line-height:1.7}
+@media(max-width:800px){.category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:420px){.category-grid{gap:8px}.category-card{min-height:98px}.category-card img{width:42px;height:42px}.category-card span{font-size:10px}}
+
 .results{display:none;margin-top:30px}.results.show{display:block}
 .results-heading{font-size:19px;font-weight:950;margin-bottom:13px}.results-heading small{font-size:11px;color:var(--muted);font-weight:500}
 .result-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -124,6 +135,9 @@ footer a{color:#a9c77c}
         <div class="suggestions" id="suggestions"></div>
       </section>
     </section>
+    <div class="section-title"><span>🧱 카테고리</span><small>실제 게임 아이템으로 탐색</small></div>
+    <section class="category-grid" id="categoryGrid"></section>
+    <div class="category-note">카테고리에는 마인크래프트 아이템 이미지만 사용했어요. 아이템을 누르면 관련 조합법을 검색합니다.</div>
     <div class="section-title"><span>🔥 인기 아이템</span><small>아이템을 선택해 조합법 보기</small></div>
     <section class="quick-grid" id="quickGrid"></section>
     <section class="results" id="results"><div class="results-heading">검색 결과 <small id="count"></small></div><div class="result-list" id="resultList"></div></section>
@@ -326,6 +340,37 @@ function makeQuickButton(item){
   const label=document.createElement("span");label.textContent=item.name;button.append(label);
   button.addEventListener("click",()=>navigateRecipe(item));return button;
 }
+
+const categories = [
+  {name:"무기", id:"iron_sword", query:"검"},
+  {name:"도구", id:"diamond_pickaxe", query:"곡괭이"},
+  {name:"방어", id:"shield", query:"방패"},
+  {name:"식량", id:"bread", query:"빵"},
+  {name:"블록", id:"crafting_table", query:"작업대"},
+  {name:"재료", id:"diamond", query:"다이아몬드"},
+  {name:"광원", id:"torch", query:"횃불"},
+  {name:"보관", id:"chest", query:"상자"}
+];
+function renderCategories(){
+  const grid=$("categoryGrid");
+  categories.forEach(category=>{
+    const button=document.createElement("button");
+    button.className="category-card";
+    button.setAttribute("aria-label",category.name+" 아이템 보기");
+    button.append(makeImage(category.id,""));
+    const label=document.createElement("span");
+    label.textContent=category.name;
+    button.append(label);
+    button.addEventListener("click",()=>{
+      search.value=category.query;
+      renderSuggestions("");
+      renderResults(category.query);
+      $("results").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+    grid.append(button);
+  });
+}
+
 function renderQuickItems(){
   const ids=["crafting_table","torch","diamond_pickaxe","chest"];
   ids.forEach(id=>{const item=items.find(x=>x.id===id);if(item)$("quickGrid").append(makeQuickButton(item));});
@@ -391,7 +436,7 @@ search.addEventListener("keydown",event=>{
 $("clear").addEventListener("click",()=>{search.value="";suggestions.classList.remove("show");results.classList.remove("show");search.focus();});
 document.addEventListener("click",event=>{if(!event.target.closest(".search-wrap"))suggestions.classList.remove("show");});
 window.addEventListener("hashchange",route);
-renderQuickItems();route();
+renderCategories();renderQuickItems();route();
 </script>
 </body>
 </html>
