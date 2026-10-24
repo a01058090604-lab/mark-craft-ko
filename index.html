@@ -80,6 +80,10 @@ main{width:min(1320px,calc(100% - 44px));margin:0 auto;padding:0 0 55px}
 footer{text-align:center;color:#8b9aa1;padding:26px;font-size:11px;border-top:1px solid #ffffff16;background:#061018aa}
 @media(max-width:900px){body:before{background-position:center center;background-size:cover;background-attachment:scroll}.topbar{gap:20px}.brand{font-size:18px}.nav{gap:16px}.categories{grid-template-columns:repeat(4,minmax(0,1fr))}.popular,.result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{min-height:350px;padding-top:66px}}
 @media(max-width:560px){body:before{background-position:center center;background-size:cover;background-attachment:scroll}.topbar{height:58px;padding:0 12px;gap:12px}.brand{font-size:14px;gap:6px}.brand img{width:30px;height:30px}.nav{gap:12px;font-size:11px}.nav a:nth-child(3){display:none}.top-search{width:34px;height:34px;font-size:19px}main{width:calc(100% - 22px)}.hero{padding-top:57px;min-height:310px}.hero h1{font-size:39px;letter-spacing:-1.8px}.hero p{font-size:13px}.searchbox{height:57px;padding-left:14px}.searchbox .glass{font-size:22px}#goSearch{width:40px;height:40px}.panel{padding:14px 12px 17px;border-radius:12px}.panel-heading{font-size:20px}.categories{gap:8px}.category{height:100px;gap:5px}.category img{width:47px;height:47px}.category span{font-size:11px}.popular,.result-grid{gap:10px}.item-card{padding:9px}.item-art{height:86px}.item-art img{width:74px;height:74px}.item-card h3{font-size:13px}.tag{font-size:9px;padding:3px 6px}.recipe-btn{font-size:11px;height:34px}.recipe-head{padding:14px;gap:12px}.recipe-head img{width:78px;height:78px}.recipe-head h1{font-size:25px}.recipe-details{grid-template-columns:1fr}.craft-grid{grid-template-columns:repeat(3,42px)}.slot{width:42px;height:42px}.slot img{width:33px;height:33px}.craft-area{gap:12px;padding:13px}}
+
+.edition-switch{display:flex;justify-content:center;gap:10px;margin:18px auto 6px;flex-wrap:wrap}.edition-btn{border:1px solid #526b70;background:#0a1722eF;color:#e8f3e5;padding:11px 20px;border-radius:10px;font-weight:900;cursor:pointer;transition:.2s}.edition-btn.selected{background:linear-gradient(#b8ff64,#75d533);border-color:#b8ff64;color:#17320c;box-shadow:0 0 18px #8ce84d33}.data-status{min-height:18px;font-size:12px;color:#c1d4be;margin:5px 0 12px;text-align:center}.craft-grid{grid-template-columns:repeat(3,58px)}.slot img{width:44px;height:44px;object-fit:contain}.material img{width:36px;height:36px;object-fit:contain}
+@media(max-width:560px){.edition-switch{gap:7px;margin:13px auto 5px}.edition-btn{padding:9px 12px;font-size:12px}.data-status{font-size:10px}.craft-grid{grid-template-columns:repeat(3,42px)}}
+
 </style>
 </head>
 <body>
@@ -93,6 +97,7 @@ footer{text-align:center;color:#8b9aa1;padding:26px;font-size:11px;border-top:1p
  <section class="hero">
   <h1>마인크래프트<span>아이템 조합법</span></h1>
   <p>지금 바로 원하는 아이템의 조합법을 검색해보세요!</p>
+  <div class="edition-switch" role="group" aria-label="게임 에디션 선택"><button id="editionJava" class="edition-btn selected" aria-pressed="true">🖥️ PC 버전</button><button id="editionBedrock" class="edition-btn" aria-pressed="false">📱 모바일 버전</button></div><div id="dataStatus" class="data-status">PC 버전 조합법 데이터를 준비 중…</div>
   <div class="searchbox"><span class="glass">⌕</span><input id="search" placeholder="아이템 이름을 검색해보세요..." autocomplete="off"><button id="goSearch">➜</button></div>
   <div id="suggestions"></div>
  </section>
@@ -118,177 +123,31 @@ footer{text-align:center;color:#8b9aa1;padding:26px;font-size:11px;border-top:1p
 <footer>마인크래프트 팬 제작 조합법 가이드 · Minecraft는 Mojang Studios 및 Microsoft의 상표입니다.</footer>
 <script>
 const ASSET_BASE="https://project-crafting.github.io/minecraft-auto-updated-textures-api/items/";
-const texture=id=>ASSET_BASE+encodeURIComponent(id)+".png";
-const items = [
-  {
-    id:"crafting_table", name:"작업대",
-    aliases:["작업대","제작대","크래프팅테이블","crafting table"],
-    desc:"여러 아이템을 조합하는 기본 도구",
-    grid:["oak_planks","oak_planks",null,
-          "oak_planks","oak_planks",null,null,null,null],
-    materials:[["oak_planks","참나무 판자",4]],
-    note:"참나무 판자 4개를 2×2 제작창에 놓습니다."
-  },
-  {
-    id:"stick", name:"막대기",
-    aliases:["막대기","스틱","stick"],
-    desc:"도구와 무기를 만드는 기본 재료",
-    grid:[null,null,null,"oak_planks",null,null,
-          "oak_planks",null,null],
-    materials:[["oak_planks","참나무 판자",2]],
-    note:"참나무 판자 2개를 세로로 배치합니다."
-  },
-  {
-    id:"wooden_pickaxe", name:"나무 곡괭이",
-    aliases:["나무곡","나무곡괭이","목곡","wooden pickaxe"],
-    desc:"초반 채굴에 사용하는 도구",
-    grid:["oak_planks","oak_planks","oak_planks",
-          null,"stick",null,null,"stick",null],
-    materials:[["oak_planks","참나무 판자",3],["stick","막대기",2]],
-    note:"판자 3개를 맨 윗줄에, 막대기 2개를 가운데 열에 놓습니다."
-  },
-  {
-    id:"stone_pickaxe", name:"돌 곡괭이",
-    aliases:["돌곡","돌곡괭이","석곡","stone pickaxe"],
-    desc:"돌과 광물을 채굴하는 도구",
-    grid:["cobblestone","cobblestone","cobblestone",
-          null,"stick",null,null,"stick",null],
-    materials:[["cobblestone","조약돌",3],["stick","막대기",2]],
-    note:"조약돌 3개와 막대기 2개가 필요합니다."
-  },
-  {
-    id:"iron_pickaxe", name:"철 곡괭이",
-    aliases:["철곡","철곡괭이","iron pickaxe"],
-    desc:"철로 만드는 채굴 도구",
-    grid:["iron_ingot","iron_ingot","iron_ingot",
-          null,"stick",null,null,"stick",null],
-    materials:[["iron_ingot","철 주괴",3],["stick","막대기",2]],
-    note:"철 주괴 3개와 막대기 2개가 필요합니다."
-  },
-  {
-    id:"diamond_pickaxe", name:"다이아몬드 곡괭이",
-    aliases:["다곡","다이아곡","다이곡","다이아곡괭이",
-      "다이아몬드곡괭이","diamond pickaxe"],
-    desc:"다이아몬드로 만드는 강력한 채굴 도구",
-    grid:["diamond","diamond","diamond",
-          null,"stick",null,null,"stick",null],
-    materials:[["diamond","다이아몬드",3],["stick","막대기",2]],
-    note:"다이아몬드 3개와 막대기 2개가 필요합니다."
-  },
-  {
-    id:"torch", name:"횃불",
-    aliases:["횃불","토치","torch"],
-    desc:"주변을 밝히는 광원",
-    grid:[null,null,null,null,"coal",null,null,"stick",null],
-    materials:[["coal","석탄",1],["stick","막대기",1]],
-    note:"석탄 또는 목탄을 막대기 위에 놓아 만듭니다."
-  },
-  {
-    id:"chest", name:"상자",
-    aliases:["상자","체스트","chest"],
-    desc:"아이템을 보관하는 저장 공간",
-    grid:["oak_planks","oak_planks","oak_planks",
-          "oak_planks",null,"oak_planks",
-          "oak_planks","oak_planks","oak_planks"],
-    materials:[["oak_planks","참나무 판자",8]],
-    note:"제작창 가운데를 비우고 판자 8개를 배치합니다."
-  },
-  {
-    id:"furnace", name:"화로",
-    aliases:["화로","퍼니스","furnace"],
-    desc:"광물을 제련하고 음식을 굽는 도구",
-    grid:["cobblestone","cobblestone","cobblestone",
-          "cobblestone",null,"cobblestone",
-          "cobblestone","cobblestone","cobblestone"],
-    materials:[["cobblestone","조약돌",8]],
-    note:"조약돌 8개를 제작창 가장자리에 배치합니다."
-  },
-  {
-    id:"iron_sword", name:"철 검",
-    aliases:["철검","철 칼","iron sword"],
-    desc:"전투에 사용하는 철제 무기",
-    grid:[null,"iron_ingot",null,null,"iron_ingot",null,
-          null,"stick",null],
-    materials:[["iron_ingot","철 주괴",2],["stick","막대기",1]],
-    note:"철 주괴 2개와 막대기 1개를 세로로 배치합니다."
-  },
-  {
-    id:"diamond_sword", name:"다이아몬드 검",
-    aliases:["다이아검","다검","다이아몬드검","diamond sword"],
-    desc:"다이아몬드로 만드는 강력한 무기",
-    grid:[null,"diamond",null,null,"diamond",null,null,"stick",null],
-    materials:[["diamond","다이아몬드",2],["stick","막대기",1]],
-    note:"다이아몬드 2개와 막대기 1개를 세로로 배치합니다."
-  },
-  {
-    id:"white_bed", name:"침대",
-    aliases:["침대","bed"],
-    desc:"잠을 자고 부활 지점을 설정하는 아이템",
-    grid:["white_wool","white_wool","white_wool",
-          "oak_planks","oak_planks","oak_planks",
-          null,null,null],
-    materials:[["white_wool","같은 색 양털",3],["oak_planks","참나무 판자",3]],
-    note:"같은 색 양털 3개와 판자 3개가 필요합니다. 결과 침대 색상은 양털 색상에 따라 달라집니다."
-  },
-  {
-    id:"bread", name:"빵",
-    aliases:["빵","bread"],
-    desc:"배고픔을 회복하는 음식",
-    grid:[null,null,null,"wheat","wheat","wheat",null,null,null],
-    materials:[["wheat","밀",3]],
-    note:"밀 3개를 가로로 나란히 놓습니다."
-  },
-  {
-    id:"paper", name:"종이",
-    aliases:["종이","페이퍼","paper"],
-    desc:"책과 지도 제작에 사용하는 재료",
-    grid:[null,null,null,"sugar_cane","sugar_cane","sugar_cane",null,null,null],
-    materials:[["sugar_cane","사탕수수",3]],
-    note:"사탕수수 3개를 가로로 나란히 놓습니다."
-  },
-  {
-    id:"book", name:"책",
-    aliases:["책","book"],
-    desc:"책장과 마법 부여대 제작에 사용하는 재료",
-    grid:[null,"paper",null,"paper","leather",null,null,"paper",null],
-    materials:[["paper","종이",3],["leather","가죽",1]],
-    note:"책 제작은 재료를 자유롭게 배치할 수 있는 무형 조합입니다. 위의 칸 배치는 재료를 보여주는 예시입니다."
-  },
-  {
-    id:"shield", name:"방패",
-    aliases:["방패","shield"],
-    desc:"공격을 막는 방어 장비",
-    grid:["oak_planks","iron_ingot","oak_planks",
-          "oak_planks","oak_planks","oak_planks",
-          null,"oak_planks",null],
-    materials:[["oak_planks","참나무 판자",6],["iron_ingot","철 주괴",1]],
-    note:"판자 6개와 철 주괴 1개를 배치합니다."
-  }];
+const texture=id=>ASSET_BASE+encodeURIComponent(String(id||'').replace(/^minecraft:/,''))+".png";
 const $=id=>document.getElementById(id);
-function makeImg(id,cls=""){const img=document.createElement("img");img.src=texture(id);img.alt=id;img.className=cls;img.loading="lazy";img.onerror=()=>{img.style.visibility="hidden"};return img}
-function norm(s){return String(s||"").toLowerCase().replace(/[\s._-]/g,"")}
-function matches(q){const n=norm(q);return items.filter(x=>[x.name,x.id,...x.aliases].some(v=>norm(v).includes(n)))}
-function card(item){const el=document.createElement("article");el.className="item-card";el.tabIndex=0;
- const art=document.createElement("div");art.className="item-art";art.append(makeImg(item.id));el.append(art);
- const h=document.createElement("h3");h.textContent=item.name;el.append(h);
- const tags=document.createElement("div");tags.className="tags";const t=document.createElement("span");t.className="tag";t.textContent=item.id.includes("pickaxe")||item.id.includes("sword")?"도구":"블록";tags.append(t);const t2=document.createElement("span");t2.className="tag";t2.textContent="기본";tags.append(t2);el.append(tags);
- const b=document.createElement("button");b.className="recipe-btn";b.textContent="조합법 보기 →";b.onclick=e=>{e.stopPropagation();location.hash="/recipe/"+item.id};el.append(b);el.onclick=()=>location.hash="/recipe/"+item.id;el.onkeydown=e=>{if(e.key==="Enter")location.hash="/recipe/"+item.id};return el}
-const categoryData=[
- {name:"무기",id:"diamond_sword",query:"검"},{name:"도구",id:"diamond_pickaxe",query:"곡괭이"},
- {name:"방어구",id:"iron_chestplate",query:"방어구"},{name:"식량",id:"apple",query:"빵"},
- {name:"블록",id:"grass_block",query:"작업대"},{name:"포션",id:"potion",query:"물약"},
- {name:"활 & 화살",id:"bow",query:"활"},{name:"기타",id:"redstone",query:"레드스톤"}
-];
-function renderCategories(){const host=$("categories");categoryData.forEach(c=>{const b=document.createElement("button");b.className="category";b.append(makeImg(c.id));const label=document.createElement("span");label.textContent=c.name;b.append(label);b.onclick=()=>{if(c.query==="방어구")runSearch("갑옷");else if(c.query==="빵")runSearch("빵");else if(c.query==="물약")runSearch("물약");else runSearch(c.query)};host.append(b)})}
-function renderPopular(){const ids=["diamond_pickaxe","crafting_table","chest","torch","furnace","iron_ingot","bow","diamond"];const list=ids.map(id=>items.find(x=>x.id===id)).filter(Boolean);$("popular").replaceChildren(...list.map(card))}
-function runSearch(q){$("search").value=q;const found=matches(q);$("resultGrid").replaceChildren();$("results").classList.add("show");if(!found.length){const e=document.createElement("div");e.className="empty";e.textContent="검색 결과가 없어요. 다른 검색어를 입력해 보세요."; $("resultGrid").append(e)}else found.forEach(x=>$("resultGrid").append(card(x)));$("results").scrollIntoView({behavior:"smooth",block:"start"});$("suggestions").classList.remove("show")}
-function renderSuggestions(){const host=$("suggestions"),q=$("search").value.trim();host.replaceChildren();if(!q){host.classList.remove("show");return}const found=matches(q).slice(0,6);if(!found.length){host.classList.remove("show");return}found.forEach(item=>{const b=document.createElement("button");b.className="suggestion";b.append(makeImg(item.id));const text=document.createElement("span");text.innerHTML="";const strong=document.createElement("strong");strong.textContent=item.name;const small=document.createElement("small");small.textContent=item.desc;text.append(strong,small);b.append(text);b.onclick=()=>location.hash="/recipe/"+item.id;host.append(b)});host.classList.add("show")}
-function renderRecipe(item){$("recipeImage").src=texture(item.id);$("recipeName").textContent=item.name;$("recipeDesc").textContent=item.desc;$("outputImage").src=texture(item.id);$("note").textContent=item.note;const grid=$("craftGrid");grid.replaceChildren();item.grid.forEach(id=>{const slot=document.createElement("div");slot.className="slot";if(id)slot.append(makeImg(id));grid.append(slot)});const mats=$("materials");mats.replaceChildren();item.materials.forEach(([id,name,count])=>{const row=document.createElement("div");row.className="material";row.append(makeImg(id));const label=document.createElement("span");label.textContent=name;const n=document.createElement("b");n.textContent="× "+count;row.append(label,n);mats.append(row)})}
-function route(){const m=location.hash.match(/^#\/recipe\/([a-z0-9_]+)$/i);if(m){const item=items.find(x=>x.id===m[1]);if(item){$("home").style.display="none";$("recipePage").classList.add("show");renderRecipe(item);window.scrollTo(0,0);document.title=item.name+" 조합법 | 마인크래프트 아이템 조합법";return}}$("home").style.display="block";$("recipePage").classList.remove("show");document.title="마인크래프트 아이템 조합법"}
-$("search").addEventListener("input",renderSuggestions);$("search").addEventListener("keydown",e=>{if(e.key==="Enter")runSearch($("search").value);if(e.key==="Escape")$("suggestions").classList.remove("show")});
-$("goSearch").onclick=()=>runSearch($("search").value);$("focusSearch").onclick=()=>$("search").focus();$("showMore").onclick=()=>runSearch("");$("allCategories").onclick=()=>document.querySelector(".categories").scrollIntoView({behavior:"smooth"});
-document.addEventListener("click",e=>{if(!e.target.closest(".hero"))$("suggestions").classList.remove("show")});window.addEventListener("hashchange",route);
-renderCategories();renderPopular();route();
+let currentEdition='java', items=[], itemById=new Map(), dataStatus='';
+const koNames={oak_planks:'참나무 판자',planks:'판자',stick:'막대기',crafting_table:'작업대',wooden_pickaxe:'나무 곡괭이',stone_pickaxe:'돌 곡괭이',iron_pickaxe:'철 곡괭이',golden_pickaxe:'금 곡괭이',diamond_pickaxe:'다이아몬드 곡괭이',netherite_pickaxe:'네더라이트 곡괭이',wooden_sword:'나무 검',stone_sword:'돌 검',iron_sword:'철 검',golden_sword:'금 검',diamond_sword:'다이아몬드 검',netherite_sword:'네더라이트 검',iron_ingot:'철 주괴',gold_ingot:'금 주괴',diamond:'다이아몬드',emerald:'에메랄드',coal:'석탄',charcoal:'목탄',torch:'횃불',chest:'상자',furnace:'화로',blast_furnace:'용광로',smoker:'훈연기',bow:'활',arrow:'화살',shield:'방패',bread:'빵',apple:'사과',golden_apple:'황금 사과',potion:'물약',water_bucket:'물 양동이',bucket:'양동이',white_bed:'하얀 침대',bed:'침대',paper:'종이',book:'책',leather:'가죽',wheat:'밀',wheat_seeds:'밀 씨앗',sugar_cane:'사탕수수',string:'실',redstone:'레드스톤 가루',redstone_torch:'레드스톤 횃불',iron_chestplate:'철 흉갑',diamond_chestplate:'다이아몬드 흉갑',leather_chestplate:'가죽 튜닉',helmet:'투구',iron_helmet:'철 투구',diamond_helmet:'다이아몬드 투구',elytra:'겉날개',ender_pearl:'엔더 진주',ender_eye:'엔더의 눈',obsidian:'흑요석',glass:'유리',glass_bottle:'유리병',stick:'막대기',ladder:'사다리',stone:'돌',cobblestone:'조약돌',sand:'모래',gravel:'자갈',dirt:'흙',grass_block:'잔디 블록',oak_log:'참나무 원목',oak_door:'참나무 문',oak_sign:'참나무 표지판',barrel:'통',anvil:'모루',enchanting_table:'마법 부여대',bookshelf:'책장',jukebox:'주크박스',compass:'나침반',clock:'시계',map:'지도',fishing_rod:'낚싯대',shears:'가위',flint_and_steel:'부싯돌과 부시',crossbow:'쇠뇌',trident:'삼지창',mace:'철퇴',honey_bottle:'꿀이 든 병',cake:'케이크',cookie:'쿠키',pumpkin_pie:'호박 파이',cooked_beef:'스테이크',cooked_porkchop:'익힌 돼지고기',baked_potato:'구운 감자'};
+function humanName(id,display){if(koNames[id])return koNames[id];if(display&&/[가-힣]/.test(display))return display;return (display||id.replace(/^minecraft:/,'').replace(/_/g,' ')).replace(/\b\w/g,c=>c.toUpperCase())}
+function norm(s){return String(s||'').toLowerCase().replace(/[\s._-]/g,'')}
+function makeImg(id,cls=''){const img=document.createElement('img');img.src=texture(id);img.alt=id||'';img.className=cls;img.loading='lazy';img.onerror=()=>{img.style.visibility='hidden'};return img}
+function asItemId(v,byNumeric){if(v==null)return null;if(typeof v==='number')return byNumeric.get(v)?.name||null;if(Array.isArray(v))return asItemId(v[0],byNumeric);if(typeof v==='object'){if(v.id!=null)return typeof v.id==='number'?(byNumeric.get(v.id)?.name||null):String(v.id).replace(/^minecraft:/,'');if(v.item)return String(v.item).replace(/^minecraft:/,'')}if(typeof v==='string')return v.replace(/^minecraft:/,'');return null}
+function gridFromRecipe(r,byNumeric){let shape=r.inShape||r.shape||r.pattern;if(!shape&&r.ingredients&&Array.isArray(r.ingredients)){return r.ingredients.map(x=>asItemId(x,byNumeric)).slice(0,9)}if(!Array.isArray(shape))return [];let rows=shape.map(row=>Array.isArray(row)?row.map(x=>asItemId(x,byNumeric)):[]);const width=Math.max(0,...rows.map(x=>x.length));const flat=[];for(let y=0;y<3;y++)for(let x=0;x<3;x++)flat.push(rows[y]?.[x]||null);return flat}
+function recipeParts(item){const r=item.recipeRaw;if(!r)return {grid:[],materials:[],note:'이 아이템은 현재 데이터에서 조합법을 찾지 못했어요. 자연 생성·거래·전리품으로 얻는 아이템일 수 있습니다.'};let byNumeric=window.__numericItems||new Map();let grid=gridFromRecipe(r,byNumeric);let counts=new Map();if(r.ingredients&&Array.isArray(r.ingredients)){for(const x of r.ingredients){const id=asItemId(x,byNumeric);if(id)counts.set(id,(counts.get(id)||0)+1)}}else for(const id of grid)if(id)counts.set(id,(counts.get(id)||0)+1);let materials=[...counts].map(([id,count])=>[id,humanName(id),count]);let shaped=!!(r.inShape||r.shape||r.pattern);let note=shaped?'재료를 표시된 위치에 배치하세요.':'재료를 제작창에 자유롭게 배치할 수 있는 조합법입니다.';if(r.type&&/furnace|smoker|campfire|stonecutter|smithing|blast_furnace/i.test(r.type))note='이 조합은 '+r.type.replace(/_/g,' ')+'에서 진행합니다.';return {grid,materials,note}}
+function card(item){const el=document.createElement('article');el.className='item-card';el.tabIndex=0;const art=document.createElement('div');art.className='item-art';art.append(makeImg(item.id));el.append(art);const h=document.createElement('h3');h.textContent=item.name;el.append(h);const tags=document.createElement('div');tags.className='tags';const t=document.createElement('span');t.className='tag';t.textContent=item.category||'아이템';tags.append(t);const t2=document.createElement('span');t2.className='tag';t2.textContent=item.recipeRaw?'조합 가능':'조합법 없음';tags.append(t2);el.append(tags);const b=document.createElement('button');b.className='recipe-btn';b.textContent='조합법 보기 →';b.onclick=e=>{e.stopPropagation();location.hash='/recipe/'+item.id};el.append(b);el.onclick=()=>location.hash='/recipe/'+item.id;el.onkeydown=e=>{if(e.key==='Enter')location.hash='/recipe/'+item.id};return el}
+function matches(q){const n=norm(q);if(!n)return items.filter(x=>x.recipeRaw).slice(0,32);return items.filter(x=>[x.name,x.id,x.displayName,x.english,...(x.aliases||[])].some(v=>norm(v).includes(n)))}
+function renderCategories(){const host=$('categories');host.replaceChildren();const cats=[{name:'무기',id:'diamond_sword',test:/sword|bow|crossbow|trident|mace|arrow/},{name:'도구',id:'diamond_pickaxe',test:/pickaxe|axe|shovel|hoe|shears|fishing_rod/},{name:'방어구',id:'iron_chestplate',test:/helmet|chestplate|leggings|boots|shield|elytra/},{name:'식량',id:'apple',test:/apple|bread|beef|porkchop|chicken|carrot|potato|cookie|cake|stew|salmon/},{name:'블록',id:'grass_block',test:/planks|stone|block|bricks|glass|slab|stairs|fence|door|trapdoor/},{name:'포션',id:'potion',test:/potion|arrow/},{name:'활 & 화살',id:'bow',test:/bow|arrow/},{name:'기타',id:'redstone',test:/.*/}];cats.forEach(c=>{const b=document.createElement('button');b.className='category';b.append(makeImg(c.id));const label=document.createElement('span');label.textContent=c.name;b.append(label);b.onclick=()=>{const found=c.name==='기타'?items.filter(x=>x.recipeRaw):items.filter(x=>c.test.test(x.id));renderResults(found);$('results').scrollIntoView({behavior:'smooth',block:'start'})};host.append(b)})}
+function renderResults(found){$('resultGrid').replaceChildren();$('results').classList.add('show');$('panelSearchStatus')?.remove();if(!found.length){const e=document.createElement('div');e.className='empty';e.textContent='검색 결과가 없어요. 다른 검색어를 입력해 보세요.';$('resultGrid').append(e)}else found.slice(0,180).forEach(x=>$('resultGrid').append(card(x)));}
+function runSearch(q){$('search').value=q;renderResults(matches(q));$('results').scrollIntoView({behavior:'smooth',block:'start'});$('suggestions').classList.remove('show')}
+function renderSuggestions(){const host=$('suggestions'),q=$('search').value.trim();host.replaceChildren();if(!q){host.classList.remove('show');return}const found=matches(q).slice(0,7);if(!found.length){host.classList.remove('show');return}found.forEach(item=>{const b=document.createElement('button');b.className='suggestion';b.append(makeImg(item.id));const text=document.createElement('span');const strong=document.createElement('strong');strong.textContent=item.name;const small=document.createElement('small');small.textContent=item.recipeRaw?'조합법 있음':'아이템 정보';text.append(strong,small);b.append(text);b.onclick=()=>location.hash='/recipe/'+item.id;host.append(b)});host.classList.add('show')}
+function renderRecipe(item){$('recipeImage').src=texture(item.id);$('recipeName').textContent=item.name;$('recipeDesc').textContent=item.desc||'마인크래프트 아이템';$('outputImage').src=texture(item.id);const p=recipeParts(item);$('note').textContent=p.note;const grid=$('craftGrid');grid.replaceChildren();let arr=p.grid||[];if(arr.length===4)arr=[arr[0],arr[1],null,arr[2],arr[3],null,null,null,null];while(arr.length<9)arr.push(null);arr.slice(0,9).forEach(id=>{const slot=document.createElement('div');slot.className='slot';if(id)slot.append(makeImg(id));grid.append(slot)});const mats=$('materials');mats.replaceChildren();if(!p.materials.length){const msg=document.createElement('p');msg.textContent='표시할 재료 정보가 없습니다.';mats.append(msg)}p.materials.forEach(([id,name,count])=>{const row=document.createElement('div');row.className='material';row.append(makeImg(id));const label=document.createElement('span');label.textContent=name;const n=document.createElement('b');n.textContent='× '+count;row.append(label,n);mats.append(row)})}
+function route(){const m=location.hash.match(/^#\/recipe\/([a-z0-9_:-]+)$/i);if(m){const item=itemById.get(m[1].replace(/^minecraft:/,''))||items.find(x=>x.id===m[1]);if(item){$('home').style.display='none';$('recipePage').classList.add('show');renderRecipe(item);window.scrollTo(0,0);document.title=item.name+' 조합법 | 마인크래프트 아이템 조합법';return}}$('home').style.display='block';$('recipePage').classList.remove('show');document.title='마인크래프트 아이템 조합법'}
+async function fetchJson(url){const r=await fetch(url);if(!r.ok)throw new Error('데이터 요청 실패 '+r.status+' '+url);return r.json()}
+function classify(id){if(/sword|bow|crossbow|trident|mace|arrow/.test(id))return '무기';if(/pickaxe|axe|shovel|hoe|shears|fishing_rod/.test(id))return '도구';if(/helmet|chestplate|leggings|boots|shield|elytra/.test(id))return '방어구';if(/apple|bread|beef|porkchop|chicken|carrot|potato|cookie|cake|stew|salmon|cod/.test(id))return '식량';if(/potion|tipped_arrow/.test(id))return '포션';if(/planks|stone|block|bricks|glass|slab|stairs|fence|door|trapdoor/.test(id))return '블록';return '기타'}
+async function loadEdition(edition){currentEdition=edition;$('editionJava').classList.toggle('selected',edition==='java');$('editionBedrock').classList.toggle('selected',edition==='bedrock');$('editionJava').setAttribute('aria-pressed',String(edition==='java'));$('editionBedrock').setAttribute('aria-pressed',String(edition==='bedrock'));$('dataStatus').textContent='조합법 데이터를 불러오는 중…';const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';const version=edition==='java'?'pc/1.21.10':'bedrock/1.21.124';try{const [rawItems,rawRecipes]=await Promise.all([fetchJson(base+version+'/items.json'),fetchJson(base+version+'/recipes.json')]);const numeric=new Map(rawItems.map(x=>[x.id,x]));window.__numericItems=numeric;let recipeMap=new Map();if(edition==='java'){for(const [key,val] of Object.entries(rawRecipes)){const target=numeric.get(Number(key));if(!target)continue;const r=Array.isArray(val)?val[0]:val;if(r)recipeMap.set(target.name,r)}}else{for(const [key,val] of Object.entries(rawRecipes)){const target=numeric.get(Number(key));if(!target)continue;const r=Array.isArray(val)?val[0]:val;if(r)recipeMap.set(target.name,r)}}items=rawItems.map(raw=>{const id=String(raw.name||'').replace(/^minecraft:/,'');const r=recipeMap.get(id)||null;return {id,name:humanName(id,raw.displayName),displayName:raw.displayName||id,english:raw.displayName||id,aliases:[id.replace(/_/g,' '),id],desc:r?'조합법 데이터를 불러왔습니다.':'게임에서 얻을 수 있는 아이템',recipeRaw:r,category:classify(id)}});itemById=new Map(items.map(x=>[x.id,x]));$('dataStatus').textContent=(edition==='java'?'PC 자바':'모바일 베드락')+' 데이터 · 아이템 '+items.length.toLocaleString()+'개';renderCategories();renderPopular();const q=$('search').value.trim();if(q)renderResults(matches(q));if(location.hash.startsWith('#/recipe/'))route();}catch(err){console.error(err);$('dataStatus').textContent='데이터 연결 실패 · 인터넷 연결을 확인하고 다시 눌러주세요';if(!items.length){items=starterItems();itemById=new Map(items.map(x=>[x.id,x]));renderCategories();renderPopular()}}}
+function renderPopular(){const preferred=['diamond_pickaxe','crafting_table','chest','torch','furnace','iron_ingot','bow','diamond'];const list=preferred.map(id=>itemById.get(id)).filter(Boolean);$('popular').replaceChildren(...list.map(card));if(!list.length)$('popular').innerHTML='<div class="empty">데이터를 불러오는 중입니다…</div>'}
+function starterItems(){return ['crafting_table','stick','wooden_pickaxe','stone_pickaxe','iron_pickaxe','diamond_pickaxe','torch','chest','furnace','iron_sword','diamond_sword','white_bed','bread','paper','book','shield'].map(id=>({id,name:humanName(id),aliases:[id],desc:'기본 아이템',recipeRaw:null,category:classify(id)}))}
+$('search').addEventListener('input',renderSuggestions);$('search').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch($('search').value);if(e.key==='Escape')$('suggestions').classList.remove('show')});$('goSearch').onclick=()=>runSearch($('search').value);$('focusSearch').onclick=()=>$('search').focus();$('showMore').onclick=()=>runSearch('');$('allCategories').onclick=()=>document.querySelector('.categories').scrollIntoView({behavior:'smooth'});$('editionJava').onclick=()=>loadEdition('java');$('editionBedrock').onclick=()=>loadEdition('bedrock');document.addEventListener('click',e=>{if(!e.target.closest('.hero'))$('suggestions').classList.remove('show')});window.addEventListener('hashchange',route);renderCategories();renderPopular();route();loadEdition('java');
+
 </script>
 </body>
 </html>
