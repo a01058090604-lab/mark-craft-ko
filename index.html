@@ -3,432 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f5f6f2">
+<meta name="theme-color" content="#101810">
 <meta name="description" content="마인크래프트 아이템 조합법을 한국어로 검색하세요.">
-<title>마크 조합법</title>
-
+<title>마크 조합법 | CRAFTING GUIDE</title>
 <style>
-:root {
-  --bg: #f5f6f2;
-  --card: #fff;
-  --text: #20251e;
-  --muted: #858b7d;
-  --green: #d5f477;
-  --border: #e5e8df;
+:root{
+  --bg:#0c100e;--panel:#151c17;--panel2:#1b241d;--line:#344236;
+  --text:#f5f4e9;--muted:#a7b0a2;--green:#b8ef55;--green2:#6f9f35;
+  --wood:#6d4527;--gold:#e8ad54;--shadow:0 18px 55px #0008;
 }
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
-}
-button, input { font: inherit; }
-button { color: inherit; }
-
-header {
-  height: 66px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #ffffffc9;
-  border-bottom: 1px solid var(--border);
-}
-.logo { font-weight: 900; font-size: 19px; letter-spacing: -1px; }
-.logo span {
-  background: var(--green);
-  padding: 6px 9px;
-  border-radius: 9px;
-  margin-right: 6px;
-}
-.header-small { color: var(--muted); font-size: 11px; }
-
-main {
-  width: min(720px, calc(100% - 32px));
-  margin: auto;
-  padding: 75px 0 55px;
-}
-.hero { text-align: center; margin-bottom: 30px; }
-.badge {
-  display: inline-block;
-  background: #e9f4cf;
-  color: #55751c;
-  padding: 7px 12px;
-  border-radius: 30px;
-  font-size: 11px;
-  font-weight: 850;
-  margin-bottom: 17px;
-}
-h1 {
-  font-size: clamp(34px, 8vw, 52px);
-  letter-spacing: -2.5px;
-  margin: 0;
-  line-height: 1.2;
-}
-h1 span { color: #789c29; }
-.subtitle {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.8;
-  margin-top: 14px;
-}
-
-.search-wrap { position: relative; z-index: 5; }
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 7px 8px 7px 17px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  box-shadow: 0 8px 28px #2430140b;
-}
-.search-box:focus-within { border-color: #b4d65c; }
-.search-icon { font-size: 23px; color: #858b7d; }
-#search {
-  width: 100%;
-  min-width: 0;
-  height: 42px;
-  border: 0;
-  outline: none;
-  background: transparent;
-  font-size: 15px;
-}
-.clear {
-  border: 0;
-  border-radius: 10px;
-  background: #f1f3ed;
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
-}
-.suggestions {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  display: none;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 7px;
-  box-shadow: 0 15px 40px #141e0a18;
-  max-height: 330px;
-  overflow-y: auto;
-}
-.suggestions.show { display: block; }
-
-.suggestion {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  background: white;
-  border: 0;
-  border-radius: 11px;
-  text-align: left;
-  cursor: pointer;
-}
-.suggestion:hover { background: #f4f8eb; }
-.suggestion strong { font-size: 13px; }
-.suggestion small {
-  display: block;
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 3px;
-}
-.item-img {
-  width: 43px;
-  height: 43px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  flex-shrink: 0;
-}
-.suggestion .arrow { margin-left: auto; color: #9aa08f; }
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  font-weight: 850;
-  margin: 29px 2px 13px;
-}
-.section-title small { color: var(--muted); font-weight: 500; }
-
-.quick-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-.quick-item {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 14px 4px 12px;
-  cursor: pointer;
-  transition: .15s;
-}
-.quick-item:hover {
-  border-color: #b4d65c;
-  transform: translateY(-2px);
-}
-.quick-item img {
-  display: block;
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  margin: 0 auto 8px;
-}
-.quick-item span {
-  display: block;
-  font-size: 10px;
-  font-weight: 800;
-  line-height: 1.5;
-}
-
-.results { display: none; margin-top: 32px; }
-.results.show { display: block; }
-.results-heading { font-size: 18px; font-weight: 900; margin-bottom: 14px; }
-.results-heading small { font-size: 11px; color: var(--muted); font-weight: 500; }
-.result-list { display: grid; gap: 9px; }
-.result-card {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  width: 100%;
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  background: white;
-  text-align: left;
-  cursor: pointer;
-}
-.result-card:hover { border-color: #b4d65c; }
-.result-card .item-img { width: 51px; height: 51px; }
-.result-info { flex: 1; }
-.result-info strong { font-size: 14px; }
-.result-info p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
-.result-card .arrow { color: #8e9684; font-size: 20px; }
-.empty {
-  padding: 26px 16px;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  background: white;
-  color: var(--muted);
-  text-align: center;
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-.recipe {
-  display: none;
-  margin-top: 24px;
-  padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: white;
-}
-.recipe.show { display: block; }
-.recipe-top { display: flex; align-items: center; gap: 13px; }
-.recipe-top .item-img { width: 62px; height: 62px; }
-.recipe h2 { font-size: 20px; margin: 0 0 5px; }
-.recipe-desc { color: var(--muted); font-size: 11px; }
-.close {
-  margin-left: auto;
-  align-self: flex-start;
-  border: 0;
-  background: #f1f3ed;
-  padding: 8px 10px;
-  border-radius: 9px;
-  cursor: pointer;
-}
-.recipe h3 { font-size: 13px; margin: 25px 0 12px; }
-
-.crafting {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 17px;
-  padding: 16px 8px;
-  background: #f6f8f2;
-  border-radius: 15px;
-}
-.craft-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 46px);
-  gap: 4px;
-}
-.slot {
-  width: 46px;
-  height: 46px;
-  background: #e5e9df;
-  border: 1px solid #d6ddcd;
-  border-radius: 5px;
-  display: grid;
-  place-items: center;
-}
-.slot img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  image-rendering: pixelated;
-}
-.craft-arrow { font-size: 23px; color: #7c8c60; }
-.output { text-align: center; font-size: 10px; font-weight: 800; }
-.output .slot { width: 56px; height: 56px; background: #e4edcf; margin-bottom: 5px; }
-.output img { width: 44px; height: 44px; }
-
-.material-list { display: grid; gap: 8px; }
-.material {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 11px;
-  background: #f8f9f5;
-  border-radius: 10px;
-  font-size: 12px;
-}
-.material img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  image-rendering: pixelated;
-}
-.material .count { margin-left: auto; color: var(--muted); }
-
-.note {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f5f7ef;
-  border-radius: 10px;
-  color: #737b68;
-  font-size: 11px;
-  line-height: 1.8;
-}
-.back {
-  margin-top: 14px;
-  padding: 10px 13px;
-  background: var(--green);
-  border: 0;
-  border-radius: 10px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-footer {
-  border-top: 1px solid var(--border);
-  padding: 25px 15px 35px;
-  text-align: center;
-  color: #92988a;
-  font-size: 10px;
-  line-height: 1.9;
-}
-footer a { color: inherit; }
-
-@media (max-width: 420px) {
-  main { padding-top: 58px; }
-  header { padding: 0 14px; }
-  .header-small { font-size: 10px; }
-  .quick-grid { gap: 6px; }
-  .quick-item img { width: 40px; height: 40px; }
-  .quick-item span { font-size: 9px; }
-  .craft-grid { grid-template-columns: repeat(3, 38px); gap: 3px; }
-  .slot { width: 38px; height: 38px; }
-  .slot img { width: 31px; height: 31px; }
-  .crafting { gap: 11px; }
-  .output .slot { width: 47px; height: 47px; }
-  .output img { width: 38px; height: 38px; }
-  .recipe { padding: 15px; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--text);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+background:radial-gradient(ellipse at 50% -10%,#243a27 0,transparent 42%),linear-gradient(180deg,#111912,#0a0d0b 72%);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.14;z-index:-1;
+background-image:linear-gradient(135deg,#263728 25%,transparent 25%),linear-gradient(225deg,#263728 25%,transparent 25%),linear-gradient(45deg,#1b271d 25%,transparent 25%),linear-gradient(315deg,#1b271d 25%,#0b100c 25%);background-position:12px 0,12px 0,0 0,0 0;background-size:24px 24px}
+button,input{font:inherit}button{color:inherit}
+a{color:inherit}
+header{height:70px;padding:0 max(18px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff14;background:#0c100ee8;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:950;font-size:19px;letter-spacing:-.7px;text-decoration:none}
+.logo-mark{width:36px;height:36px;display:grid;place-items:center;background:linear-gradient(145deg,#d5ff7a,#7cab38);color:#182211;border:2px solid #e4ffad;border-radius:8px;box-shadow:0 4px 0 #426023;font-size:22px}
+.header-right{font-size:11px;color:var(--muted);letter-spacing:1.2px}
+main{width:min(1080px,calc(100% - 32px));margin:auto;padding:38px 0 65px}
+.hero{position:relative;overflow:hidden;min-height:310px;padding:40px 32px 30px;border:1px solid #536b47;border-radius:18px;background:linear-gradient(90deg,#101a13f5 0%,#101a13db 48%,#101a1370 100%),url("https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80") center 48%/cover;box-shadow:var(--shadow)}
+.hero:after{content:"";position:absolute;right:8%;bottom:-35px;width:180px;height:180px;border:16px solid #b8ef5515;transform:rotate(45deg);pointer-events:none}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-size:10px;font-weight:900;letter-spacing:2px}
+.eyebrow:before{content:"";width:20px;height:3px;background:var(--green);box-shadow:0 0 12px #b8ef5577}
+h1{font-size:clamp(32px,6vw,55px);line-height:1.15;letter-spacing:-2px;margin:17px 0 12px;font-weight:1000}
+h1 span{color:var(--green);text-shadow:0 3px 0 #385329}
+.subtitle{color:#c4cbbf;line-height:1.8;font-size:13px;margin:0 0 24px}
+.search-wrap{position:relative;z-index:5;max-width:600px}
+.search-box{display:flex;align-items:center;gap:10px;padding:7px 8px 7px 15px;background:#0b100de8;border:1px solid #52634d;border-radius:10px;box-shadow:0 5px 0 #050705}
+.search-box:focus-within{border-color:var(--green);box-shadow:0 5px 0 #050705,0 0 0 3px #b8ef551a}
+.search-icon{font-size:23px;color:var(--green)}
+#search{width:100%;min-width:0;height:39px;border:0;outline:none;background:transparent;color:white;font-size:14px}
+#search::placeholder{color:#879184}
+.clear{width:34px;height:34px;border:1px solid #3c4a3b;border-radius:7px;background:#202a20;cursor:pointer}
+.suggestions{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;background:#131a15;border:1px solid #42513e;border-radius:10px;padding:6px;box-shadow:var(--shadow);max-height:320px;overflow:auto}
+.suggestions.show{display:block}
+.suggestion{width:100%;display:flex;align-items:center;gap:12px;padding:10px;border:0;border-radius:7px;background:transparent;text-align:left;cursor:pointer}
+.suggestion:hover{background:#263624}
+.suggestion strong{font-size:13px}.suggestion small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.item-img{width:43px;height:43px;object-fit:contain;image-rendering:pixelated;flex-shrink:0}
+.arrow{margin-left:auto;color:var(--green)}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:34px 2px 14px;font-size:15px;font-weight:900}
+.section-title small{font-size:11px;color:var(--muted);font-weight:500}
+.section-title span{display:flex;align-items:center;gap:9px}
+.section-title span:before{content:"";width:4px;height:17px;background:var(--green);box-shadow:0 0 10px #b8ef5570}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.quick-item{position:relative;min-height:122px;background:linear-gradient(145deg,#1b251d,#121814);border:1px solid #344333;border-radius:11px;padding:17px 8px 13px;cursor:pointer;transition:.18s;box-shadow:0 4px 0 #070a08;text-align:center}
+.quick-item:before{content:"";position:absolute;left:0;top:0;width:26px;height:3px;background:var(--green);opacity:.75}
+.quick-item:hover{transform:translateY(-3px);border-color:#a4d64f;box-shadow:0 7px 0 #070a08,0 0 22px #9cdb3815}
+.quick-item img{display:block;width:48px;height:48px;object-fit:contain;image-rendering:pixelated;margin:0 auto 10px}
+.quick-item span{font-size:11px;font-weight:850}
+.results{display:none;margin-top:30px}.results.show{display:block}
+.results-heading{font-size:19px;font-weight:950;margin-bottom:13px}.results-heading small{font-size:11px;color:var(--muted);font-weight:500}
+.result-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.result-card{display:flex;align-items:center;gap:13px;width:100%;padding:13px;border:1px solid #334034;border-radius:10px;background:#151c17;text-align:left;cursor:pointer}
+.result-card:hover{border-color:var(--green);background:#1b271c}.result-card .item-img{width:48px;height:48px}
+.result-info{flex:1}.result-info strong{font-size:14px}.result-info p{margin:5px 0 0;color:var(--muted);font-size:11px}
+.empty{padding:25px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--muted);text-align:center;font-size:13px;grid-column:1/-1}
+.recipe-page{display:none}.recipe-page.show{display:block}
+.back-link{display:inline-flex;align-items:center;gap:9px;margin:4px 0 20px;padding:10px 13px;border:1px solid #43513f;border-radius:8px;background:#182019;color:#d9e3d4;text-decoration:none;font-size:12px;font-weight:800}
+.back-link:hover{border-color:var(--green);color:var(--green)}
+.recipe-hero{display:grid;grid-template-columns:170px 1fr;gap:25px;align-items:center;padding:28px;border:1px solid #465841;border-radius:14px;background:linear-gradient(130deg,#1c2a1d,#121814 72%);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.recipe-icon{width:145px;height:145px;display:grid;place-items:center;background:#0b110d;border:1px solid #3d4b39;border-radius:12px;box-shadow:inset 0 0 0 5px #172119,0 5px 0 #080b09}
+.recipe-icon img{width:105px;height:105px;object-fit:contain;image-rendering:pixelated}
+.recipe-kicker{font-size:10px;color:var(--green);font-weight:900;letter-spacing:2px}
+.recipe-hero h1{font-size:clamp(28px,4vw,43px);margin:10px 0}
+.recipe-desc{color:#b9c3b5;font-size:13px;line-height:1.8}
+.recipe-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:15px;margin-top:16px}
+.recipe-card{border:1px solid #344333;border-radius:12px;background:#151c17;padding:20px;box-shadow:0 5px 0 #070a08}
+.recipe-card h2{font-size:14px;margin:0 0 17px;display:flex;align-items:center;gap:9px}
+.recipe-card h2:before{content:"";width:4px;height:15px;background:var(--green)}
+.crafting{display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,30px);padding:20px 8px;background:#0d130f;border:1px solid #2b382c;border-radius:10px}
+.craft-grid{display:grid;grid-template-columns:repeat(3,54px);gap:4px}
+.slot{width:54px;height:54px;background:linear-gradient(145deg,#29332a,#1b241d);border:2px solid #3a4839;border-radius:4px;display:grid;place-items:center;box-shadow:inset 0 2px 3px #0005}
+.slot img{width:41px;height:41px;object-fit:contain;image-rendering:pixelated}
+.craft-arrow{font-size:28px;color:var(--gold);text-shadow:0 0 12px #e8ad5440}
+.output{text-align:center;font-size:10px;font-weight:800;color:#bdc8b7}
+.output .slot{width:66px;height:66px;background:#263522;border-color:#66804a;margin-bottom:8px}
+.output img{width:50px;height:50px}
+.material-list{display:grid;gap:8px}
+.material{display:flex;align-items:center;gap:11px;padding:10px;background:#101611;border:1px solid #2d392e;border-radius:8px;font-size:12px}
+.material img{width:34px;height:34px;object-fit:contain;image-rendering:pixelated}
+.material .count{margin-left:auto;color:var(--green);font-weight:900}
+.note{margin-top:14px;padding:12px;border-left:3px solid var(--gold);background:#211c13;border-radius:0 7px 7px 0;color:#d7c7a8;font-size:11px;line-height:1.8}
+.related{margin-top:25px}
+footer{border-top:1px solid #ffffff15;padding:26px 15px 35px;text-align:center;color:#7f897c;font-size:10px;line-height:1.9}
+footer a{color:#a9c77c}
+@media(max-width:620px){
+ header{height:62px;padding:0 15px}.logo{font-size:16px}.header-right{font-size:9px}
+ main{padding-top:20px}.hero{padding:29px 19px 22px;min-height:300px;background-position:60% center}
+ .quick-grid{grid-template-columns:repeat(2,1fr);gap:9px}.quick-item{min-height:112px}
+ .result-list{grid-template-columns:1fr}
+ .recipe-hero{grid-template-columns:86px 1fr;gap:15px;padding:17px}
+ .recipe-icon{width:82px;height:82px}.recipe-icon img{width:60px;height:60px}
+ .recipe-hero h1{font-size:27px;letter-spacing:-1px}.recipe-desc{font-size:11px}
+ .recipe-layout{grid-template-columns:1fr}.recipe-card{padding:15px}
+ .craft-grid{grid-template-columns:repeat(3,clamp(35px,10vw,48px));gap:3px}
+ .slot{width:clamp(35px,10vw,48px);height:clamp(35px,10vw,48px)}
+ .slot img{width:80%;height:80%}.output .slot{width:52px;height:52px}.output img{width:40px;height:40px}
+ .crafting{gap:10px;padding:15px 4px}
 }
 </style>
 </head>
-
 <body>
 <header>
-  <div class="logo"><span>⛏</span>마크 조합법</div>
-  <div class="header-small">한국어 아이템 검색</div>
+  <a class="logo" href="#/" aria-label="마크 조합법 메인"><span class="logo-mark">⛏</span> 마크 조합법</a>
+  <div class="header-right">MINECRAFT CRAFTING GUIDE</div>
 </header>
-
 <main>
-  <section class="hero">
-    <div class="badge">CRAFTING SEARCH</div>
-    <h1>무엇을 <span>만들까요?</span></h1>
-    <p class="subtitle">
-      아이템 이름을 검색해 조합법을 확인하세요.<br>
-      줄임말로 검색해도 괜찮아요!
-    </p>
+  <section id="homePage">
+    <section class="hero">
+      <div class="eyebrow">BLOCK BY BLOCK · CRAFTING GUIDE</div>
+      <h1>마인크래프트<br><span>아이템 조합법</span></h1>
+      <p class="subtitle">원하는 아이템을 검색하고 조합 방법을 확인하세요.<br>재료부터 제작 순서까지 한눈에!</p>
+      <section class="search-wrap">
+        <div class="search-box"><span class="search-icon">⌕</span><input id="search" type="search" placeholder="아이템 검색 (예: 다곡, 횃불, 작업대)" autocomplete="off"><button class="clear" id="clear" aria-label="검색어 지우기">×</button></div>
+        <div class="suggestions" id="suggestions"></div>
+      </section>
+    </section>
+    <div class="section-title"><span>🔥 인기 아이템</span><small>아이템을 선택해 조합법 보기</small></div>
+    <section class="quick-grid" id="quickGrid"></section>
+    <section class="results" id="results"><div class="results-heading">검색 결과 <small id="count"></small></div><div class="result-list" id="resultList"></div></section>
   </section>
-
-  <section class="search-wrap">
-    <div class="search-box">
-      <span class="search-icon">⌕</span>
-      <input id="search" type="search"
-        placeholder="예: 다곡, 횃불, 작업대..."
-        autocomplete="off">
-      <button class="clear" id="clear" aria-label="검색어 지우기">×</button>
+  <section class="recipe-page" id="recipePage">
+    <a class="back-link" href="#/">← 메인 페이지로</a>
+    <section class="recipe-hero">
+      <div class="recipe-icon"><img id="recipeImage" alt=""></div>
+      <div><div class="recipe-kicker">CRAFTING RECIPE</div><h1 id="recipeName">아이템</h1><div class="recipe-desc" id="recipeDesc"></div></div>
+    </section>
+    <div class="recipe-layout">
+      <section class="recipe-card"><h2>🧱 조합대 배치</h2><div class="crafting"><div class="craft-grid" id="craftGrid"></div><div class="craft-arrow">➜</div><div class="output"><div class="slot"><img id="outputImage" alt=""></div>결과물</div></div><div class="note" id="note"></div></section>
+      <section class="recipe-card"><h2>📦 필요한 재료</h2><div class="material-list" id="materials"></div></section>
     </div>
-    <div class="suggestions" id="suggestions"></div>
-  </section>
-
-  <div class="section-title">
-    <span>🔥 인기 아이템</span>
-    <small>눌러서 바로 확인</small>
-  </div>
-  <section class="quick-grid" id="quickGrid"></section>
-
-  <section class="results" id="results">
-    <div class="results-heading">검색 결과 <small id="count"></small></div>
-    <div class="result-list" id="resultList"></div>
-  </section>
-
-  <section class="recipe" id="recipe">
-    <div class="recipe-top">
-      <img class="item-img" id="recipeImage" alt="">
-      <div>
-        <h2 id="recipeName"></h2>
-        <div class="recipe-desc" id="recipeDesc"></div>
-      </div>
-      <button class="close" id="close">닫기</button>
-    </div>
-
-    <h3>🧱 조합 방법</h3>
-    <div class="crafting">
-      <div class="craft-grid" id="craftGrid"></div>
-      <div class="craft-arrow">➜</div>
-      <div class="output">
-        <div class="slot"><img id="outputImage" alt=""></div>
-        결과물
-      </div>
-    </div>
-
-    <h3>📦 필요한 재료</h3>
-    <div class="material-list" id="materials"></div>
-    <div class="note" id="note"></div>
-    <button class="back" id="back">← 검색 결과로</button>
+    <section class="related"><div class="section-title"><span>🧭 다른 인기 아이템</span><small>다른 조합법도 확인해 보세요</small></div><div class="quick-grid" id="relatedGrid"></div></section>
   </section>
 </main>
-
-<footer>
-  비공식 팬 제작 조합법 검색 사이트입니다.<br>
-  Minecraft는 Mojang Studios 및 Microsoft의 상표입니다.<br>
-  <a href="https://www.minecraft.net/pl-pl/usage-guidelines" target="_blank" rel="noopener">
-    Minecraft 사용 지침 확인
-  </a><br>
-  아이템 이미지 출처: Minecraft 게임 리소스. 외부 이미지 주소 및 사용 조건을 확인하세요.
-</footer>
-
+<footer>비공식 팬 제작 조합법 검색 사이트입니다.<br>Minecraft는 Mojang Studios 및 Microsoft의 상표입니다.<br><a href="https://www.minecraft.net/pl-pl/usage-guidelines" target="_blank" rel="noopener">Minecraft 사용 지침 확인</a><br>아이템 이미지 출처: Minecraft 게임 리소스. 외부 이미지 주소 및 사용 조건을 확인하세요.</footer>
 <script>
-const ASSET_BASE =
-  "https://project-crafting.github.io/minecraft-auto-updated-textures-api/items/";
-
+const ASSET_BASE = "https://project-crafting.github.io/minecraft-auto-updated-textures-api/items/";
 const texture = id => ASSET_BASE + encodeURIComponent(id) + ".png";
-
 const items = [
   {
     id:"crafting_table", name:"작업대",
@@ -573,264 +289,109 @@ const items = [
           null,"oak_planks",null],
     materials:[["oak_planks","참나무 판자",6],["iron_ingot","철 주괴",1]],
     note:"판자 6개와 철 주괴 1개를 배치합니다."
-  }
-];
+  }];
 
 const $ = id => document.getElementById(id);
 const search = $("search");
 const suggestions = $("suggestions");
 const results = $("results");
-const recipePanel = $("recipe");
-
-function imageUrl(id) {
-  return texture(id);
+const homePage = $("homePage");
+const recipePage = $("recipePage");
+function imageUrl(id){ return texture(id); }
+function makeImage(id,className="item-img"){
+  const img=document.createElement("img");img.className=className;img.src=imageUrl(id);img.alt=id;img.loading="lazy";
+  img.onerror=()=>{img.removeAttribute("src");img.alt="🧱";img.style.imageRendering="auto";};return img;
 }
-
-function makeImage(id, className="item-img") {
-  const img = document.createElement("img");
-  img.className = className;
-  img.src = imageUrl(id);
-  img.alt = id;
-  img.loading = "lazy";
-  img.onerror = () => {
-    img.style.visibility = "visible";
-    img.removeAttribute("src");
-    img.alt = "이미지 없음: " + id;
-    img.style.background = "#f1f3ed";
-    img.style.borderRadius = "6px";
-  };
-  return img;
+function normalize(value){return value.toLowerCase().replace(/\s+/g,"").replace(/[·._-]/g,"");}
+function findMatches(query){
+  const q=normalize(query);if(!q)return [];
+  return items.filter(item=>[item.name,...item.aliases,item.id].some(term=>normalize(term).includes(q)));
 }
-
-function normalize(value) {
-  return value.toLowerCase().replace(/\s+/g, "")
-    .replace(/[·._-]/g, "");
+function makeSuggestion(item){
+  const button=document.createElement("button");button.className="suggestion";button.append(makeImage(item.id));
+  const text=document.createElement("span"),strong=document.createElement("strong"),small=document.createElement("small");
+  strong.textContent=item.name;small.textContent=item.desc;text.append(strong,small);button.append(text);
+  const arrow=document.createElement("span");arrow.className="arrow";arrow.textContent="↗";button.append(arrow);
+  button.addEventListener("click",()=>navigateRecipe(item));return button;
 }
-
-function findMatches(query) {
-  const q = normalize(query);
-  if (!q) return [];
-
-  return items.filter(item =>
-    [item.name, ...item.aliases, item.id]
-      .some(term => normalize(term).includes(q))
-  );
-}
-
-function makeSuggestion(item) {
-  const button = document.createElement("button");
-  button.className = "suggestion";
-  button.append(makeImage(item.id));
-
-  const text = document.createElement("span");
-  const strong = document.createElement("strong");
-  strong.textContent = item.name;
-
-  const small = document.createElement("small");
-  small.textContent = item.desc;
-
-  text.append(strong, small);
-  button.append(text);
-
-  const arrow = document.createElement("span");
-  arrow.className = "arrow";
-  arrow.textContent = "↗";
-  button.append(arrow);
-
-  button.addEventListener("click", () => showRecipe(item));
-  return button;
-}
-
-function renderSuggestions(query) {
-  suggestions.replaceChildren();
-
-  if (!query.trim()) {
-    suggestions.classList.remove("show");
-    return;
-  }
-
-  const matches = findMatches(query).slice(0, 7);
-
-  if (!matches.length) {
-    const empty = document.createElement("div");
-    empty.className = "suggestion";
-    empty.textContent = "검색 결과가 없어요. 다른 이름으로 검색해 보세요.";
-    suggestions.append(empty);
-  } else {
-    matches.forEach(item => suggestions.append(makeSuggestion(item)));
-  }
-
+function renderSuggestions(query){
+  suggestions.replaceChildren();if(!query.trim()){suggestions.classList.remove("show");return;}
+  const matches=findMatches(query).slice(0,7);
+  if(!matches.length){const empty=document.createElement("div");empty.className="suggestion";empty.textContent="검색 결과가 없어요. 다른 이름으로 검색해 보세요.";suggestions.append(empty);}
+  else matches.forEach(item=>suggestions.append(makeSuggestion(item)));
   suggestions.classList.add("show");
 }
-
-function renderQuickItems() {
-  const ids = ["crafting_table", "torch", "diamond_pickaxe", "chest"];
-  const grid = $("quickGrid");
-
-  ids.forEach(id => {
-    const item = items.find(x => x.id === id);
-    const button = document.createElement("button");
-    button.className = "quick-item";
-    button.append(makeImage(item.id));
-
-    const label = document.createElement("span");
-    label.textContent = item.name;
-    button.append(label);
-
-    button.addEventListener("click", () => showRecipe(item));
-    grid.append(button);
-  });
+function makeQuickButton(item){
+  const button=document.createElement("button");button.className="quick-item";button.append(makeImage(item.id));
+  const label=document.createElement("span");label.textContent=item.name;button.append(label);
+  button.addEventListener("click",()=>navigateRecipe(item));return button;
 }
-
-function renderResults(query) {
-  const matches = findMatches(query);
-  const list = $("resultList");
-  list.replaceChildren();
-  $("count").textContent = `${matches.length}개`;
-
-  if (!matches.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "찾는 아이템이 없어요. 검색어를 바꿔 보세요.";
-    list.append(empty);
-  } else {
-    matches.forEach(item => {
-      const button = document.createElement("button");
-      button.className = "result-card";
-      button.append(makeImage(item.id));
-
-      const info = document.createElement("span");
-      info.className = "result-info";
-
-      const name = document.createElement("strong");
-      name.textContent = item.name;
-
-      const desc = document.createElement("p");
-      desc.textContent = item.desc;
-
-      info.append(name, desc);
-      button.append(info);
-
-      const arrow = document.createElement("span");
-      arrow.className = "arrow";
-      arrow.textContent = "›";
-      button.append(arrow);
-
-      button.addEventListener("click", () => showRecipe(item));
-      list.append(button);
-    });
-  }
-
+function renderQuickItems(){
+  const ids=["crafting_table","torch","diamond_pickaxe","chest"];
+  ids.forEach(id=>{const item=items.find(x=>x.id===id);if(item)$("quickGrid").append(makeQuickButton(item));});
+}
+function renderRelated(current){
+  const grid=$("relatedGrid");grid.replaceChildren();
+  items.filter(item=>item.id!==current.id).slice(0,4).forEach(item=>grid.append(makeQuickButton(item)));
+}
+function renderResults(query){
+  const matches=findMatches(query),list=$("resultList");list.replaceChildren();$("count").textContent=`${matches.length}개`;
+  if(!matches.length){const empty=document.createElement("div");empty.className="empty";empty.textContent="찾는 아이템이 없어요. 검색어를 바꿔 보세요.";list.append(empty);}
+  else matches.forEach(item=>{
+    const button=document.createElement("button");button.className="result-card";button.append(makeImage(item.id));
+    const info=document.createElement("span");info.className="result-info";const name=document.createElement("strong"),desc=document.createElement("p");
+    name.textContent=item.name;desc.textContent=item.desc;info.append(name,desc);button.append(info);
+    const arrow=document.createElement("span");arrow.className="arrow";arrow.textContent="↗";button.append(arrow);
+    button.addEventListener("click",()=>navigateRecipe(item));list.append(button);
+  });
   results.classList.add("show");
-  recipePanel.classList.remove("show");
 }
-
-function showRecipe(item) {
-  search.value = item.name;
-  suggestions.classList.remove("show");
-  results.classList.remove("show");
-
-  $("recipeImage").src = imageUrl(item.id);
-  $("recipeImage").alt = item.name;
-  $("recipeName").textContent = item.name;
-  $("recipeDesc").textContent = item.desc;
-  $("outputImage").src = imageUrl(item.id);
-  $("outputImage").alt = item.name;
-  $("recipeImage").onerror = () => {
-    $("recipeImage").removeAttribute("src");
-    $("recipeImage").alt = "이미지 없음";
-  };
-  $("outputImage").onerror = () => {
-    $("outputImage").removeAttribute("src");
-    $("outputImage").alt = "이미지 없음";
-  };
-  $("note").textContent = item.note;
-
-  const grid = $("craftGrid");
-  grid.replaceChildren();
-
-  item.grid.forEach(id => {
-    const slot = document.createElement("div");
-    slot.className = "slot";
-    if (id) slot.append(makeImage(id, ""));
-    grid.append(slot);
+function renderRecipe(item){
+  $("recipeImage").src=imageUrl(item.id);$("recipeImage").alt=item.name;
+  $("outputImage").src=imageUrl(item.id);$("outputImage").alt=item.name;
+  $("recipeName").textContent=item.name;$("recipeDesc").textContent=item.desc;$("note").textContent=item.note;
+  const grid=$("craftGrid");grid.replaceChildren();
+  item.grid.forEach(id=>{const slot=document.createElement("div");slot.className="slot";if(id)slot.append(makeImage(id,""));grid.append(slot);});
+  const materials=$("materials");materials.replaceChildren();
+  item.materials.forEach(([id,name,count])=>{
+    const row=document.createElement("div");row.className="material";row.append(makeImage(id,""));
+    const label=document.createElement("span");label.textContent=name;const amount=document.createElement("span");amount.className="count";amount.textContent=`× ${count}`;
+    row.append(label,amount);materials.append(row);
   });
-
-  const materials = $("materials");
-  materials.replaceChildren();
-
-  item.materials.forEach(([id, name, count]) => {
-    const row = document.createElement("div");
-    row.className = "material";
-    row.append(makeImage(id, ""));
-
-    const label = document.createElement("span");
-    label.textContent = name;
-
-    const amount = document.createElement("span");
-    amount.className = "count";
-    amount.textContent = `× ${count}`;
-
-    row.append(label, amount);
-    materials.append(row);
-  });
-
-  recipePanel.classList.add("show");
-  recipePanel.scrollIntoView({behavior:"smooth", block:"start"});
+  renderRelated(item);
 }
-
-search.addEventListener("input", () => {
+function navigateRecipe(item){location.hash="/recipe/"+item.id;}
+function showHome(){
+  homePage.style.display="block";recipePage.classList.remove("show");
+  document.title="마크 조합법 | CRAFTING GUIDE";
+}
+function showRecipeRoute(id){
+  const item=items.find(x=>x.id===id);
+  if(!item){showHome();return;}
+  homePage.style.display="none";recipePage.classList.add("show");suggestions.classList.remove("show");
+  renderRecipe(item);document.title=item.name+" 조합법 | 마크 조합법";
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function route(){
+  const match=location.hash.match(/^#\/recipe\/([a-z0-9_]+)$/i);
+  if(match)showRecipeRoute(match[1]);else showHome();
+}
+search.addEventListener("input",()=>{
   renderSuggestions(search.value);
-
-  if (search.value.trim()) {
-    renderResults(search.value);
-  } else {
-    results.classList.remove("show");
-    recipePanel.classList.remove("show");
+  if(search.value.trim())renderResults(search.value);else results.classList.remove("show");
+});
+search.addEventListener("keydown",event=>{
+  if(event.key==="Enter"){
+    const matches=findMatches(search.value);
+    if(matches.length===1)navigateRecipe(matches[0]);
+    else if(matches.length>1){suggestions.classList.remove("show");renderResults(search.value);}
   }
+  if(event.key==="Escape")suggestions.classList.remove("show");
 });
-
-search.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    const matches = findMatches(search.value);
-
-    if (matches.length === 1) {
-      showRecipe(matches[0]);
-    } else if (matches.length > 1) {
-      suggestions.classList.remove("show");
-      renderResults(search.value);
-    }
-  }
-
-  if (event.key === "Escape") {
-    suggestions.classList.remove("show");
-  }
-});
-
-$("clear").addEventListener("click", () => {
-  search.value = "";
-  suggestions.classList.remove("show");
-  results.classList.remove("show");
-  recipePanel.classList.remove("show");
-  search.focus();
-});
-
-$("close").addEventListener("click", () => {
-  recipePanel.classList.remove("show");
-});
-
-$("back").addEventListener("click", () => {
-  recipePanel.classList.remove("show");
-  if (search.value.trim()) renderResults(search.value);
-});
-
-document.addEventListener("click", event => {
-  if (!event.target.closest(".search-wrap")) {
-    suggestions.classList.remove("show");
-  }
-});
-
-renderQuickItems();
+$("clear").addEventListener("click",()=>{search.value="";suggestions.classList.remove("show");results.classList.remove("show");search.focus();});
+document.addEventListener("click",event=>{if(!event.target.closest(".search-wrap"))suggestions.classList.remove("show");});
+window.addEventListener("hashchange",route);
+renderQuickItems();route();
 </script>
 </body>
 </html>
