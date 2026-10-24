@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f6f2">
+<meta name="description" content="마인크래프트 아이템 조합법을 한국어로 검색하세요.">
+<title>마크 조합법</title>
+
+<style>
+:root {
+  --bg: #f5f6f2;
+  --card: #fff;
+  --text: #20251e;
+  --muted: #858b7d;
+  --green: #d5f477;
+  --border: #e5e8df;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
+}
+button, input { font: inherit; }
+button { color: inherit; }
+
+header {
+  height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #ffffffc9;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-weight: 900; font-size: 19px; letter-spacing: -1px; }
+.logo span {
+  background: var(--green);
+  padding: 6px 9px;
+  border-radius: 9px;
+  margin-right: 6px;
+}
+.header-small { color: var(--muted); font-size: 11px; }
+
+main {
+  width: min(720px, calc(100% - 32px));
+  margin: auto;
+  padding: 75px 0 55px;
+}
+.hero { text-align: center; margin-bottom: 30px; }
+.badge {
+  display: inline-block;
+  background: #e9f4cf;
+  color: #55751c;
+  padding: 7px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 850;
+  margin-bottom: 17px;
+}
+h1 {
+  font-size: clamp(34px, 8vw, 52px);
+  letter-spacing: -2.5px;
+  margin: 0;
+  line-height: 1.2;
+}
+h1 span { color: #789c29; }
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 14px;
+}
+
+.search-wrap { position: relative; z-index: 5; }
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 7px 8px 7px 17px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  box-shadow: 0 8px 28px #2430140b;
+}
+.search-box:focus-within { border-color: #b4d65c; }
+.search-icon { font-size: 23px; color: #858b7d; }
+#search {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+}
+.clear {
+  border: 0;
+  border-radius: 10px;
+  background: #f1f3ed;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+.suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  display: none;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 7px;
+  box-shadow: 0 15px 40px #141e0a18;
+  max-height: 330px;
+  overflow-y: auto;
+}
+.suggestions.show { display: block; }
+
+.suggestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: white;
+  border: 0;
+  border-radius: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+.suggestion:hover { background: #f4f8eb; }
+.suggestion strong { font-size: 13px; }
+.suggestion small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 3px;
+}
+.item-img {
+  width: 43px;
+  height: 43px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+.suggestion .arrow { margin-left: auto; color: #9aa08f; }
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 850;
+  margin: 29px 2px 13px;
+}
+.section-title small { color: var(--muted); font-weight: 500; }
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.quick-item {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 14px 4px 12px;
+  cursor: pointer;
+  transition: .15s;
+}
+.quick-item:hover {
+  border-color: #b4d65c;
+  transform: translateY(-2px);
+}
+.quick-item img {
+  display: block;
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 0 auto 8px;
+}
+.quick-item span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.results { display: none; margin-top: 32px; }
+.results.show { display: block; }
+.results-heading { font-size: 18px; font-weight: 900; margin-bottom: 14px; }
+.results-heading small { font-size: 11px; color: var(--muted); font-weight: 500; }
+.result-list { display: grid; gap: 9px; }
+.result-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+}
+.result-card:hover { border-color: #b4d65c; }
+.result-card .item-img { width: 51px; height: 51px; }
+.result-info { flex: 1; }
+.result-info strong { font-size: 14px; }
+.result-info p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.result-card .arrow { color: #8e9684; font-size: 20px; }
+.empty {
+  padding: 26px 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: white;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.recipe {
+  display: none;
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: white;
+}
+.recipe.show { display: block; }
+.recipe-top { display: flex; align-items: center; gap: 13px; }
+.recipe-top .item-img { width: 62px; height: 62px; }
+.recipe h2 { font-size: 20px; margin: 0 0 5px; }
+.recipe-desc { color: var(--muted); font-size: 11px; }
+.close {
+  margin-left: auto;
+  align-self: flex-start;
+  border: 0;
+  background: #f1f3ed;
+  padding: 8px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.recipe h3 { font-size: 13px; margin: 25px 0 12px; }
+
+.crafting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 17px;
+  padding: 16px 8px;
+  background: #f6f8f2;
+  border-radius: 15px;
+}
+.craft-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  gap: 4px;
+}
+.slot {
+  width: 46px;
+  height: 46px;
+  background: #e5e9df;
+  border: 1px solid #d6ddcd;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+}
+.slot img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.craft-arrow { font-size: 23px; color: #7c8c60; }
+.output { text-align: center; font-size: 10px; font-weight: 800; }
+.output .slot { width: 56px; height: 56px; background: #e4edcf; margin-bottom: 5px; }
+.output img { width: 44px; height: 44px; }
+
+.material-list { display: grid; gap: 8px; }
+.material {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background: #f8f9f5;
+  border-radius: 10px;
+  font-size: 12px;
+}
+.material img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.material .count { margin-left: auto; color: var(--muted); }
+
+.note {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f5f7ef;
+  border-radius: 10px;
+  color: #737b68;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.back {
+  margin-top: 14px;
+  padding: 10px 13px;
+  background: var(--green);
+  border: 0;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 25px 15px 35px;
+  text-align: center;
+  color: #92988a;
+  font-size: 10px;
+  line-height: 1.9;
+}
+footer a { color: inherit; }
+
+@media (max-width: 420px) {
+  main { padding-top: 58px; }
+  header { padding: 0 14px; }
+  .header-small { font-size: 10px; }
+  .quick-grid { gap: 6px; }
+  .quick-item img { width: 40px; height: 40px; }
+  .quick-item span { font-size: 9px; }
+  .craft-grid { grid-template-columns: repeat(3, 38px); gap: 3px; }
+  .slot { width: 38px; height: 38px; }
+  .slot img { width: 31px; height: 31px; }
+  .crafting { gap: 11px; }
+  .output .slot { width: 47px; height: 47px; }
+  .output img { width: 38px; height: 38px; }
+  .recipe { padding: 15px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo"><span>⛏</span>마크 조합법</div>
+  <div class="header-small">한국어 아이템 검색</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="badge">CRAFTING SEARCH</div>
+    <h1>무엇을 <span>만들까요?</span></h1>
+    <p class="subtitle">
+      아이템 이름을 검색해 조합법을 확인하세요.<br>
+      줄임말로 검색해도 괜찮아요!
+    </p>
+  </section>
+
+  <section class="search-wrap">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input id="search" type="search"
+        placeholder="예: 다곡, 횃불, 작업대..."
+        autocomplete="off">
+      <button class="clear" id="clear" aria-label="검색어 지우기">×</button>
+    </div>
+    <div class="suggestions" id="suggestions"></div>
+  </section>
+
+  <div class="section-title">
+    <span>🔥 인기 아이템</span>
+    <small>눌러서 바로 확인</small>
+  </div>
+  <section class="quick-grid" id="quickGrid"></section>
+
+  <section class="results" id="results">
+    <div class="results-heading">검색 결과 <small id="count"></small></div>
+    <div class="result-list" id="resultList"></div>
+  </section>
+
+  <section class="recipe" id="recipe">
+    <div class="recipe-top">
+      <img class="item-img" id="recipeImage" alt="">
+      <div>
+        <h2 id="recipeName"></h2>
+        <div class="recipe-desc" id="recipeDesc"></div>
+      </div>
+      <button class="close" id="close">닫기</button>
+    </div>
+
+    <h3>🧱 조합 방법</h3>
+    <div class="crafting">
+      <div class="craft-grid" id="craftGrid"></div>
+      <div class="craft-arrow">➜</div>
+      <div class="output">
+        <div class="slot"><img id="outputImage" alt=""></div>
+        결과물
+      </div>
+    </div>
+
+    <h3>📦 필요한 재료</h3>
+    <div class="material-list" id="materials"></div>
+    <div class="note" id="note"></div>
+    <button class="back" id="back">← 검색 결과로</button>
+  </section>
+</main>
+
+<footer>
+  비공식 팬 제작 조합법 검색 사이트입니다.<br>
+  Minecraft는 Mojang Studios 및 Microsoft의 상표입니다.<br>
+  <a href="https://www.minecraft.net/pl-pl/usage-guidelines" target="_blank" rel="noopener">
+    Minecraft 사용 지침 확인
+  </a><br>
+  아이템 이미지 출처: Minecraft 게임 리소스. 외부 이미지 주소 및 사용 조건을 확인하세요.
+</footer>
+
+<script>
+const VERSION = "1.21.4";
+const ASSET_BASE =
+  `https://mcasset.cloud/${VERSION}/assets/minecraft/textures/item/`;
+
+const texture = id => ASSET_BASE + id + ".png";
+
+const items = [
+  {
+    id:"crafting_table", name:"작업대",
+    aliases:["작업대","제작대","크래프팅테이블","crafting table"],
+    desc:"여러 아이템을 조합하는 기본 도구",
+    grid:["oak_planks","oak_planks",null,
+          "oak_planks","oak_planks",null,null,null,null],
+    materials:[["oak_planks","참나무 판자",4]],
+    note:"참나무 판자 4개를 2×2 제작창에 놓습니다."
+  },
+  {
+    id:"stick", name:"막대기",
+    aliases:["막대기","스틱","stick"],
+    desc:"도구와 무기를 만드는 기본 재료",
+    grid:[null,null,null,"oak_planks",null,null,
+          "oak_planks",null,null],
+    materials:[["oak_planks","참나무 판자",2]],
+    note:"참나무 판자 2개를 세로로 배치합니다."
+  },
+  {
+    id:"wooden_pickaxe", name:"나무 곡괭이",
+    aliases:["나무곡","나무곡괭이","목곡","wooden pickaxe"],
+    desc:"초반 채굴에 사용하는 도구",
+    grid:["oak_planks","oak_planks","oak_planks",
+          null,"stick",null,null,"stick",null],
+    materials:[["oak_planks","참나무 판자",3],["stick","막대기",2]],
+    note:"판자 3개를 맨 윗줄에, 막대기 2개를 가운데 열에 놓습니다."
+  },
+  {
+    id:"stone_pickaxe", name:"돌 곡괭이",
+    aliases:["돌곡","돌곡괭이","석곡","stone pickaxe"],
+    desc:"돌과 광물을 채굴하는 도구",
+    grid:["cobblestone","cobblestone","cobblestone",
+          null,"stick",null,null,"stick",null],
+    materials:[["cobblestone","조약돌",3],["stick","막대기",2]],
+    note:"조약돌 3개와 막대기 2개가 필요합니다."
+  },
+  {
+    id:"iron_pickaxe", name:"철 곡괭이",
+    aliases:["철곡","철곡괭이","iron pickaxe"],
+    desc:"철로 만드는 채굴 도구",
+    grid:["iron_ingot","iron_ingot","iron_ingot",
+          null,"stick",null,null,"stick",null],
+    materials:[["iron_ingot","철 주괴",3],["stick","막대기",2]],
+    note:"철 주괴 3개와 막대기 2개가 필요합니다."
+  },
+  {
+    id:"diamond_pickaxe", name:"다이아몬드 곡괭이",
+    aliases:["다곡","다이아곡","다이곡","다이아곡괭이",
+      "다이아몬드곡괭이","diamond pickaxe"],
+    desc:"다이아몬드로 만드는 강력한 채굴 도구",
+    grid:["diamond","diamond","diamond",
+          null,"stick",null,null,"stick",null],
+    materials:[["diamond","다이아몬드",3],["stick","막대기",2]],
+    note:"다이아몬드 3개와 막대기 2개가 필요합니다."
+  },
+  {
+    id:"torch", name:"횃불",
+    aliases:["횃불","토치","torch"],
+    desc:"주변을 밝히는 광원",
+    grid:[null,null,null,null,"coal",null,null,"stick",null],
+    materials:[["coal","석탄",1],["stick","막대기",1]],
+    note:"석탄 또는 목탄을 막대기 위에 놓아 만듭니다."
+  },
+  {
+    id:"chest", name:"상자",
+    aliases:["상자","체스트","chest"],
+    desc:"아이템을 보관하는 저장 공간",
+    grid:["oak_planks","oak_planks","oak_planks",
+          "oak_planks",null,"oak_planks",
+          "oak_planks","oak_planks","oak_planks"],
+    materials:[["oak_planks","참나무 판자",8]],
+    note:"제작창 가운데를 비우고 판자 8개를 배치합니다."
+  },
+  {
+    id:"furnace", name:"화로",
+    aliases:["화로","퍼니스","furnace"],
+    desc:"광물을 제련하고 음식을 굽는 도구",
+    grid:["cobblestone","cobblestone","cobblestone",
+          "cobblestone",null,"cobblestone",
+          "cobblestone","cobblestone","cobblestone"],
+    materials:[["cobblestone","조약돌",8]],
+    note:"조약돌 8개를 제작창 가장자리에 배치합니다."
+  },
+  {
+    id:"iron_sword", name:"철 검",
+    aliases:["철검","철 칼","iron sword"],
+    desc:"전투에 사용하는 철제 무기",
+    grid:[null,"iron_ingot",null,null,"iron_ingot",null,
+          null,"stick",null],
+    materials:[["iron_ingot","철 주괴",2],["stick","막대기",1]],
+    note:"철 주괴 2개와 막대기 1개를 세로로 배치합니다."
+  },
+  {
+    id:"diamond_sword", name:"다이아몬드 검",
+    aliases:["다이아검","다검","다이아몬드검","diamond sword"],
+    desc:"다이아몬드로 만드는 강력한 무기",
+    grid:[null,"diamond",null,null,"diamond",null,null,"stick",null],
+    materials:[["diamond","다이아몬드",2],["stick","막대기",1]],
+    note:"다이아몬드 2개와 막대기 1개를 세로로 배치합니다."
+  },
+  {
+    id:"white_bed", name:"침대",
+    aliases:["침대","bed"],
+    desc:"잠을 자고 부활 지점을 설정하는 아이템",
+    grid:["white_wool","white_wool","white_wool",
+          "oak_planks","oak_planks","oak_planks",
+          null,null,null],
+    materials:[["white_wool","같은 색 양털",3],["oak_planks","참나무 판자",3]],
+    note:"같은 색 양털 3개와 판자 3개가 필요합니다. 결과 침대 색상은 양털 색상에 따라 달라집니다."
+  },
+  {
+    id:"bread", name:"빵",
+    aliases:["빵","bread"],
+    desc:"배고픔을 회복하는 음식",
+    grid:[null,null,null,"wheat","wheat","wheat",null,null,null],
+    materials:[["wheat","밀",3]],
+    note:"밀 3개를 가로로 나란히 놓습니다."
+  },
+  {
+    id:"paper", name:"종이",
+    aliases:["종이","페이퍼","paper"],
+    desc:"책과 지도 제작에 사용하는 재료",
+    grid:[null,null,null,"sugar_cane","sugar_cane","sugar_cane",null,null,null],
+    materials:[["sugar_cane","사탕수수",3]],
+    note:"사탕수수 3개를 가로로 나란히 놓습니다."
+  },
+  {
+    id:"book", name:"책",
+    aliases:["책","book"],
+    desc:"책장과 마법 부여대 제작에 사용하는 재료",
+    grid:[null,"paper",null,"paper","leather",null,null,"paper",null],
+    materials:[["paper","종이",3],["leather","가죽",1]],
+    note:"책 제작은 재료를 자유롭게 배치할 수 있는 무형 조합입니다. 위의 칸 배치는 재료를 보여주는 예시입니다."
+  },
+  {
+    id:"shield", name:"방패",
+    aliases:["방패","shield"],
+    desc:"공격을 막는 방어 장비",
+    grid:["oak_planks","iron_ingot","oak_planks",
+          "oak_planks","oak_planks","oak_planks",
+          null,"oak_planks",null],
+    materials:[["oak_planks","참나무 판자",6],["iron_ingot","철 주괴",1]],
+    note:"판자 6개와 철 주괴 1개를 배치합니다."
+  }
+];
+
+const $ = id => document.getElementById(id);
+const search = $("search");
+const suggestions = $("suggestions");
+const results = $("results");
+const recipePanel = $("recipe");
+
+function imageUrl(id) {
+  return texture(id);
+}
+
+function makeImage(id, className="item-img") {
+  const img = document.createElement("img");
+  img.className = className;
+  img.src = imageUrl(id);
+  img.alt = id;
+  img.loading = "lazy";
+  img.onerror = () => {
+    img.style.visibility = "hidden";
+    img.alt = "이미지를 불러올 수 없습니다";
+  };
+  return img;
+}
+
+function normalize(value) {
+  return value.toLowerCase().replace(/\s+/g, "")
+    .replace(/[·._-]/g, "");
+}
+
+function findMatches(query) {
+  const q = normalize(query);
+  if (!q) return [];
+
+  return items.filter(item =>
+    [item.name, ...item.aliases, item.id]
+      .some(term => normalize(term).includes(q))
+  );
+}
+
+function makeSuggestion(item) {
+  const button = document.createElement("button");
+  button.className = "suggestion";
+  button.append(makeImage(item.id));
+
+  const text = document.createElement("span");
+  const strong = document.createElement("strong");
+  strong.textContent = item.name;
+
+  const small = document.createElement("small");
+  small.textContent = item.desc;
+
+  text.append(strong, small);
+  button.append(text);
+
+  const arrow = document.createElement("span");
+  arrow.className = "arrow";
+  arrow.textContent = "↗";
+  button.append(arrow);
+
+  button.addEventListener("click", () => showRecipe(item));
+  return button;
+}
+
+function renderSuggestions(query) {
+  suggestions.replaceChildren();
+
+  if (!query.trim()) {
+    suggestions.classList.remove("show");
+    return;
+  }
+
+  const matches = findMatches(query).slice(0, 7);
+
+  if (!matches.length) {
+    const empty = document.createElement("div");
+    empty.className = "suggestion";
+    empty.textContent = "검색 결과가 없어요. 다른 이름으로 검색해 보세요.";
+    suggestions.append(empty);
+  } else {
+    matches.forEach(item => suggestions.append(makeSuggestion(item)));
+  }
+
+  suggestions.classList.add("show");
+}
+
+function renderQuickItems() {
+  const ids = ["crafting_table", "torch", "diamond_pickaxe", "chest"];
+  const grid = $("quickGrid");
+
+  ids.forEach(id => {
+    const item = items.find(x => x.id === id);
+    const button = document.createElement("button");
+    button.className = "quick-item";
+    button.append(makeImage(item.id));
+
+    const label = document.createElement("span");
+    label.textContent = item.name;
+    button.append(label);
+
+    button.addEventListener("click", () => showRecipe(item));
+    grid.append(button);
+  });
+}
+
+function renderResults(query) {
+  const matches = findMatches(query);
+  const list = $("resultList");
+  list.replaceChildren();
+  $("count").textContent = `${matches.length}개`;
+
+  if (!matches.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "찾는 아이템이 없어요. 검색어를 바꿔 보세요.";
+    list.append(empty);
+  } else {
+    matches.forEach(item => {
+      const button = document.createElement("button");
+      button.className = "result-card";
+      button.append(makeImage(item.id));
+
+      const info = document.createElement("span");
+      info.className = "result-info";
+
+      const name = document.createElement("strong");
+      name.textContent = item.name;
+
+      const desc = document.createElement("p");
+      desc.textContent = item.desc;
+
+      info.append(name, desc);
+      button.append(info);
+
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = "›";
+      button.append(arrow);
+
+      button.addEventListener("click", () => showRecipe(item));
+      list.append(button);
+    });
+  }
+
+  results.classList.add("show");
+  recipePanel.classList.remove("show");
+}
+
+function showRecipe(item) {
+  search.value = item.name;
+  suggestions.classList.remove("show");
+  results.classList.remove("show");
+
+  $("recipeImage").src = imageUrl(item.id);
+  $("recipeImage").alt = item.name;
+  $("recipeName").textContent = item.name;
+  $("recipeDesc").textContent = item.desc;
+  $("outputImage").src = imageUrl(item.id);
+  $("outputImage").alt = item.name;
+  $("note").textContent = item.note;
+
+  const grid = $("craftGrid");
+  grid.replaceChildren();
+
+  item.grid.forEach(id => {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    if (id) slot.append(makeImage(id, ""));
+    grid.append(slot);
+  });
+
+  const materials = $("materials");
+  materials.replaceChildren();
+
+  item.materials.forEach(([id, name, count]) => {
+    const row = document.createElement("div");
+    row.className = "material";
+    row.append(makeImage(id, ""));
+
+    const label = document.createElement("span");
+    label.textContent = name;
+
+    const amount = document.createElement("span");
+    amount.className = "count";
+    amount.textContent = `× ${count}`;
+
+    row.append(label, amount);
+    materials.append(row);
+  });
+
+  recipePanel.classList.add("show");
+  recipePanel.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+search.addEventListener("input", () => {
+  renderSuggestions(search.value);
+
+  if (search.value.trim()) {
+    renderResults(search.value);
+  } else {
+    results.classList.remove("show");
+    recipePanel.classList.remove("show");
+  }
+});
+
+search.addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    const matches = findMatches(search.value);
+
+    if (matches.length === 1) {
+      showRecipe(matches[0]);
+    } else if (matches.length > 1) {
+      suggestions.classList.remove("show");
+      renderResults(search.value);
+    }
+  }
+
+  if (event.key === "Escape") {
+    suggestions.classList.remove("show");
+  }
+});
+
+$("clear").addEventListener("click", () => {
+  search.value = "";
+  suggestions.classList.remove("show");
+  results.classList.remove("show");
+  recipePanel.classList.remove("show");
+  search.focus();
+});
+
+$("close").addEventListener("click", () => {
+  recipePanel.classList.remove("show");
+});
+
+$("back").addEventListener("click", () => {
+  recipePanel.classList.remove("show");
+  if (search.value.trim()) renderResults(search.value);
+});
+
+document.addEventListener("click", event => {
+  if (!event.target.closest(".search-wrap")) {
+    suggestions.classList.remove("show");
+  }
+});
+
+renderQuickItems();
+</script>
+</body>
+</html>
