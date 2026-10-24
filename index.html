@@ -143,7 +143,53 @@ function renderRecipe(item){$('recipeImage').src=texture(item.id);$('recipeName'
 function route(){const m=location.hash.match(/^#\/recipe\/([a-z0-9_:-]+)$/i);if(m){const item=itemById.get(m[1].replace(/^minecraft:/,''))||items.find(x=>x.id===m[1]);if(item){$('home').style.display='none';$('recipePage').classList.add('show');renderRecipe(item);window.scrollTo(0,0);document.title=item.name+' 조합법 | 마인크래프트 아이템 조합법';return}}$('home').style.display='block';$('recipePage').classList.remove('show');document.title='마인크래프트 아이템 조합법'}
 async function fetchJson(url){const r=await fetch(url);if(!r.ok)throw new Error('데이터 요청 실패 '+r.status+' '+url);return r.json()}
 function classify(id){if(/sword|bow|crossbow|trident|mace|arrow/.test(id))return '무기';if(/pickaxe|axe|shovel|hoe|shears|fishing_rod/.test(id))return '도구';if(/helmet|chestplate|leggings|boots|shield|elytra/.test(id))return '방어구';if(/apple|bread|beef|porkchop|chicken|carrot|potato|cookie|cake|stew|salmon|cod/.test(id))return '식량';if(/potion|tipped_arrow/.test(id))return '포션';if(/planks|stone|block|bricks|glass|slab|stairs|fence|door|trapdoor/.test(id))return '블록';return '기타'}
-async function loadEdition(edition){currentEdition=edition;$('editionJava').classList.toggle('selected',edition==='java');$('editionBedrock').classList.toggle('selected',edition==='bedrock');$('editionJava').setAttribute('aria-pressed',String(edition==='java'));$('editionBedrock').setAttribute('aria-pressed',String(edition==='bedrock'));$('dataStatus').textContent='조합법 데이터를 불러오는 중…';const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';const version=edition==='java'?'pc/1.21.10':'bedrock/1.21.124';try{const [rawItems,rawRecipes]=await Promise.all([fetchJson(base+version+'/items.json'),fetchJson(base+version+'/recipes.json')]);const numeric=new Map(rawItems.map(x=>[x.id,x]));window.__numericItems=numeric;let recipeMap=new Map();if(edition==='java'){for(const [key,val] of Object.entries(rawRecipes)){const target=numeric.get(Number(key));if(!target)continue;const r=Array.isArray(val)?val[0]:val;if(r)recipeMap.set(target.name,r)}}else{for(const [key,val] of Object.entries(rawRecipes)){const target=numeric.get(Number(key));if(!target)continue;const r=Array.isArray(val)?val[0]:val;if(r)recipeMap.set(target.name,r)}}items=rawItems.map(raw=>{const id=String(raw.name||'').replace(/^minecraft:/,'');const r=recipeMap.get(id)||null;return {id,name:humanName(id,raw.displayName),displayName:raw.displayName||id,english:raw.displayName||id,aliases:[id.replace(/_/g,' '),id],desc:r?'조합법 데이터를 불러왔습니다.':'게임에서 얻을 수 있는 아이템',recipeRaw:r,category:classify(id)}});itemById=new Map(items.map(x=>[x.id,x]));$('dataStatus').textContent=(edition==='java'?'PC 자바':'모바일 베드락')+' 데이터 · 아이템 '+items.length.toLocaleString()+'개';renderCategories();renderPopular();const q=$('search').value.trim();if(q)renderResults(matches(q));if(location.hash.startsWith('#/recipe/'))route();}catch(err){console.error(err);$('dataStatus').textContent='데이터 연결 실패 · 인터넷 연결을 확인하고 다시 눌러주세요';if(!items.length){items=starterItems();itemById=new Map(items.map(x=>[x.id,x]));renderCategories();renderPopular()}}}
+async function loadEdition(edition){
+ currentEdition=edition;
+ $('editionJava').classList.toggle('selected',edition==='java');
+ $('editionBedrock').classList.toggle('selected',edition==='bedrock');
+ $('editionJava').setAttribute('aria-pressed',String(edition==='java'));
+ $('editionBedrock').setAttribute('aria-pressed',String(edition==='bedrock'));
+ $('dataStatus').textContent='조합법 데이터를 불러오는 중…';
+ const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';
+ const version=edition==='java'?'pc/1.21.4':'bedrock/1.21.0';
+ try{
+   const [rawItems,rawRecipes]=await Promise.all([
+     fetchJson(base+version+'/items.json'),
+     fetchJson(base+version+'/recipes.json')
+   ]);
+   const numeric=new Map(rawItems.map(x=>[Number(x.id),x]));
+   window.__numericItems=numeric;
+   const recipeMap=new Map();
+   // minecraft-data recipes.json is an array of recipe definitions, not a map keyed by output item.
+   const recipes=Array.isArray(rawRecipes)?rawRecipes:Object.values(rawRecipes).flat();
+   for(const r of recipes){
+     if(!r)continue;
+     const result=r.result||r.output||r.out||null;
+     let outId=null;
+     if(Array.isArray(result)&&result.length) outId=asItemId(result[0],numeric);
+     else outId=asItemId(result,numeric);
+     if(!outId && r.result && typeof r.result==='object' && r.result.id!=null)
+       outId=asItemId(r.result.id,numeric);
+     if(!outId && r.output && typeof r.output==='object' && r.output.id!=null)
+       outId=asItemId(r.output.id,numeric);
+     if(outId && !recipeMap.has(outId)) recipeMap.set(outId,r);
+   }
+   items=rawItems.map(raw=>{
+     const id=String(raw.name||'').replace(/^minecraft:/,'');
+     const r=recipeMap.get(id)||null;
+     return {id,name:humanName(id,raw.displayName),displayName:raw.displayName||id,english:raw.displayName||id,aliases:[id.replace(/_/g,' '),id],desc:r?'조합법 데이터를 불러왔습니다.':'게임에서 얻을 수 있는 아이템',recipeRaw:r,category:classify(id)};
+   });
+   itemById=new Map(items.map(x=>[x.id,x]));
+   $('dataStatus').textContent=(edition==='java'?'PC 자바':'모바일 베드락')+' 데이터 · 아이템 '+items.length.toLocaleString()+'개 · 조합법 '+recipeMap.size.toLocaleString()+'개';
+   renderCategories();renderPopular();
+   const q=$('search').value.trim();if(q)renderResults(matches(q));
+   if(location.hash.startsWith('#/recipe/'))route();
+ }catch(err){
+   console.error(err);
+   $('dataStatus').textContent='데이터 연결 실패 · 인터넷 연결을 확인하고 다시 눌러주세요';
+   if(!items.length){items=starterItems();itemById=new Map(items.map(x=>[x.id,x]));renderCategories();renderPopular()}
+ }
+}
 function renderPopular(){const preferred=['diamond_pickaxe','crafting_table','chest','torch','furnace','iron_ingot','bow','diamond'];const list=preferred.map(id=>itemById.get(id)).filter(Boolean);$('popular').replaceChildren(...list.map(card));if(!list.length)$('popular').innerHTML='<div class="empty">데이터를 불러오는 중입니다…</div>'}
 function starterItems(){return ['crafting_table','stick','wooden_pickaxe','stone_pickaxe','iron_pickaxe','diamond_pickaxe','torch','chest','furnace','iron_sword','diamond_sword','white_bed','bread','paper','book','shield'].map(id=>({id,name:humanName(id),aliases:[id],desc:'기본 아이템',recipeRaw:null,category:classify(id)}))}
 $('search').addEventListener('input',renderSuggestions);$('search').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch($('search').value);if(e.key==='Escape')$('suggestions').classList.remove('show')});$('goSearch').onclick=()=>runSearch($('search').value);$('focusSearch').onclick=()=>$('search').focus();$('showMore').onclick=()=>runSearch('');$('allCategories').onclick=()=>document.querySelector('.categories').scrollIntoView({behavior:'smooth'});$('editionJava').onclick=()=>loadEdition('java');$('editionBedrock').onclick=()=>loadEdition('bedrock');document.addEventListener('click',e=>{if(!e.target.closest('.hero'))$('suggestions').classList.remove('show')});window.addEventListener('hashchange',route);renderCategories();renderPopular();route();loadEdition('java');
