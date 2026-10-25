@@ -187,7 +187,7 @@ async function fetchJson(url){
 function classify(id){if(/sword|bow|crossbow|trident|mace|arrow/.test(id))return '무기';if(/pickaxe|axe|shovel|hoe|shears|fishing_rod/.test(id))return '도구';if(/helmet|chestplate|leggings|boots|shield|elytra/.test(id))return '방어구';if(/apple|bread|beef|porkchop|chicken|carrot|potato|cookie|cake|stew|salmon|cod/.test(id))return '식량';if(/potion|tipped_arrow/.test(id))return '포션';if(/planks|stone|block|bricks|glass|slab|stairs|fence|door|trapdoor/.test(id))return '블록';return '기타'}
 async function loadEdition(edition){
  currentEdition=edition;$('editionJava').classList.toggle('selected',edition==='java');$('editionBedrock').classList.toggle('selected',edition==='bedrock');$('editionJava').setAttribute('aria-pressed',String(edition==='java'));$('editionBedrock').setAttribute('aria-pressed',String(edition==='bedrock'));$('dataStatus').textContent='조합법 데이터를 불러오는 중…';
- const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';const version=edition==='java'?'pc/1.21.4':'bedrock/1.21.0';
+ const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';const version=edition==='java'?'pc/1.21.10':'bedrock/1.21.124';
  try{
  const [rawItems,rawRecipes]=await Promise.all([fetchJson(base+version+'/items.json'),fetchJson(base+version+'/recipes.json')]);
  try{koTranslations=await fetchJson('https://raw.githubusercontent.com/xydesu/minecraft-lang/main/ko_kr.json')}catch(e){console.warn('한국어 번역 파일을 불러오지 못했습니다.',e);koTranslations={}}
