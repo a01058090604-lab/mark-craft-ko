@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mark-craft-ko.vercel.app/sitemap.xml
