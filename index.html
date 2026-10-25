@@ -235,15 +235,20 @@ async function loadEdition(edition){
   let dataset=editionCache.get(edition);
   if(!dataset){
    const base='https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/';
-   const version=edition==='java'?'pc/1.21.4':'bedrock/1.21.0';
-   const [rawItems,rawRecipes,translations]=await Promise.all([
-    fetchJson(base+version+'/items.json'),
-    fetchJson(base+version+'/recipes.json'),
+   const itemVersion=edition==='java'?'pc/1.21.4':'bedrock/1.21.0';
+   // PrismarineJS의 bedrock/1.21.0 폴더에는 recipes.json이 없어 404가 발생합니다.
+   // 따라서 베드락 아이템 목록과 PC 1.21.4 조합 데이터/ID 맵을 별도로 불러옵니다.
+   // 아이템 이름을 기준으로 매칭해 PC와 베드락의 숫자 ID 차이로 재료가 뒤바뀌지 않게 합니다.
+   const [rawItems,recipeItems,rawRecipes,translations]=await Promise.all([
+    fetchJson(base+itemVersion+'/items.json'),
+    edition==='java'?Promise.resolve(null):fetchJson(base+'pc/1.21.4/items.json'),
+    fetchJson(base+'pc/1.21.4/recipes.json'),
     loadKoTranslations()
    ]);
-   // 번역은 두 버전에서 공통으로 사용하고, 조합법 데이터는 선택한 에디션만 처리합니다.
+   // 번역은 두 버전에서 공통으로 사용합니다.
    koTranslations=translations;
-   const numeric=new Map(rawItems.map(x=>[Number(x.id),x]));
+   const numericSource=recipeItems||rawItems;
+   const numeric=new Map(numericSource.map(x=>[Number(x.id),x]));
    const recipesByOutput=new Map();
    const addRecipe=(outId,r)=>{
     if(!outId||!r)return;
@@ -291,8 +296,9 @@ async function loadEdition(edition){
   window.__numericItems=dataset.numeric;
   items=dataset.items;
   itemById=dataset.itemById;
-  $('dataStatus').textContent=(edition==='java'?'PC 자바':'모바일 베드락')+
-   ' 데이터 · 제작 가능한 아이템 '+items.filter(x=>x.recipeRaw).length.toLocaleString()+'개';
+  $('dataStatus').textContent=edition==='java'
+   ?'PC 자바 데이터 · 제작 가능한 아이템 '+items.filter(x=>x.recipeRaw).length.toLocaleString()+'개'
+   :'모바일 베드락 아이템 · 공통 조합법 데이터 · 제작 가능한 아이템 '+items.filter(x=>x.recipeRaw).length.toLocaleString()+'개';
   renderCategories();
   renderPopular();
   const q=$('search').value.trim();
