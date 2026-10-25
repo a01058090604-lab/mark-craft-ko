@@ -6,7 +6,14 @@
 <meta name="theme-color" content="#08121b">
 <title>마인크래프트 아이템 조합법</title>
 <meta name="description" content="마인크래프트 작업대, 횃불, 화로, 방패 등 다양한 아이템 조합법을 한국어로 검색하고 필요한 재료와 제작 방법을 확인하세요.">
-<meta name="robots" content="index,follow">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="마인크래프트 아이템 조합법">
+<meta property="og:title" content="마인크래프트 아이템 조합법">
+<meta property="og:description" content="마인크래프트 아이템 조합법을 검색하고 필요한 재료와 제작 방법을 확인하세요.">
+<meta property="og:url" content="https://mark-craft-ko.vercel.app/">
+<meta name="twitter:card" content="summary">
+<script id="seoStructuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/","inLanguage":"ko-KR","potentialAction":{"@type":"SearchAction","target":"https://mark-craft-ko.vercel.app/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
 <link rel="canonical" href="https://mark-craft-ko.vercel.app/">
 <style>
 :root{--green:#9bea45;--green2:#6ecb35;--bg:#061018;--panel:rgba(5,15,21,.91);--line:#30434b;--white:#f6f8f4;--muted:#b5c0c6}
@@ -195,7 +202,7 @@ function navigateToRecipe(id){
  history.pushState({},'', '/recipe/'+slug);
  route();
 }
-function updateSeo(title,description,path){
+function updateSeo(title,description,path,item){
  document.title=title;
  let meta=document.querySelector('meta[name="description"]');
  if(!meta){meta=document.createElement('meta');meta.name='description';document.head.append(meta)}
@@ -203,6 +210,14 @@ function updateSeo(title,description,path){
  let canonical=document.querySelector('link[rel="canonical"]');
  if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical)}
  canonical.href='https://mark-craft-ko.vercel.app'+path;
+ const ogTitle=document.querySelector('meta[property="og:title"]');if(ogTitle)ogTitle.content=title;
+ const ogDesc=document.querySelector('meta[property="og:description"]');if(ogDesc)ogDesc.content=description;
+ const ogUrl=document.querySelector('meta[property="og:url"]');if(ogUrl)ogUrl.content=canonical.href;
+ const schema=document.getElementById('seoStructuredData');
+ if(schema){
+  const data=item?{"@context":"https://schema.org","@type":"WebPage","name":title,"description":description,"url":canonical.href,"inLanguage":"ko-KR","isPartOf":{"@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/"},"mainEntity":{"@type":"Thing","name":item.name,"alternateName":item.id.replace(/_/g,' ')}}:{"@context":"https://schema.org","@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/","inLanguage":"ko-KR","potentialAction":{"@type":"SearchAction","target":"https://mark-craft-ko.vercel.app/?q={search_term_string}","query-input":"required name=search_term_string"}};
+  schema.textContent=JSON.stringify(data);
+ }
 }
 function route(){
  const pathMatch=location.pathname.match(/^\/recipe\/([a-z0-9-]+)\/?$/i);
@@ -213,7 +228,7 @@ function route(){
   if(item&&item.recipeRaw){
    $('home').style.display='none';$('recipePage').classList.add('show');renderRecipe(item);window.scrollTo(0,0);
    const path='/recipe/'+String(item.id).replace(/_/g,'-');
-   updateSeo(item.name+' 조합법 | 마인크래프트 아이템 조합법',item.name+' 조합법을 확인하세요. 필요한 재료와 제작 방법을 한국어로 안내합니다.',path);
+   updateSeo(item.name+' 조합법 | 마인크래프트 아이템 조합법',item.name+' 조합법을 확인하세요. 필요한 재료와 제작 방법을 한국어로 안내합니다.',path,item);
    return;
   }
  }
