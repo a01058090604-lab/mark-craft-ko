@@ -4,17 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08121b">
-<title>마인크래프트 아이템 조합법</title>
-<meta name="description" content="마인크래프트 작업대, 횃불, 화로, 방패 등 다양한 아이템 조합법을 한국어로 검색하고 필요한 재료와 제작 방법을 확인하세요.">
-<meta name="robots" content="index,follow,max-image-preview:large">
+<title>마인크래프트 조합법 검색 | 아이템 제작 재료·방법 - 마크 조합법</title>
+<meta name="description" content="마인크래프트 조합법을 한국어로 검색하세요. 작업대, 곡괭이, 검, 횃불, 화로 등 인기 아이템의 필요한 재료와 제작 배치를 한눈에 확인할 수 있습니다.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="Mark Craft Ko">
+<meta name="application-name" content="마인크래프트 아이템 조합법">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="마인크래프트 아이템 조합법">
-<meta property="og:title" content="마인크래프트 아이템 조합법">
-<meta property="og:description" content="마인크래프트 아이템 조합법을 검색하고 필요한 재료와 제작 방법을 확인하세요.">
+<meta property="og:title" content="마인크래프트 조합법 검색 | 아이템 제작 재료·방법">
+<meta property="og:description" content="마인크래프트 아이템별 조합 재료와 제작 배치를 한국어로 확인하세요.">
 <meta property="og:url" content="https://mark-craft-ko.vercel.app/">
 <meta name="twitter:card" content="summary">
-<script id="seoStructuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/","inLanguage":"ko-KR","potentialAction":{"@type":"SearchAction","target":"https://mark-craft-ko.vercel.app/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
+<meta name="twitter:title" content="마인크래프트 아이템 조합법">
+<meta name="twitter:description" content="마인크래프트 조합 재료와 제작 방법을 한국어로 검색하세요.">
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<link rel="preconnect" href="https://project-crafting.github.io" crossorigin>
 <link rel="canonical" href="https://mark-craft-ko.vercel.app/">
+<script id="seoStructuredData" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"마인크래프트 아이템 조합법","alternateName":"마크 조합법","url":"https://mark-craft-ko.vercel.app/","inLanguage":"ko-KR","description":"마인크래프트 아이템별 조합 재료와 제작 방법을 한국어로 검색하고 확인하는 팬 제작 가이드."}</script>
 <style>
 :root{--green:#9bea45;--green2:#6ecb35;--bg:#061018;--panel:rgba(5,15,21,.91);--line:#30434b;--white:#f6f8f4;--muted:#b5c0c6}
 *{box-sizing:border-box}
@@ -218,7 +226,28 @@ function updateSeo(title,description,path,item){
  const ogUrl=document.querySelector('meta[property="og:url"]');if(ogUrl)ogUrl.content=canonical.href;
  const schema=document.getElementById('seoStructuredData');
  if(schema){
-  const data=item?{"@context":"https://schema.org","@type":"WebPage","name":title,"description":description,"url":canonical.href,"inLanguage":"ko-KR","isPartOf":{"@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/"},"mainEntity":{"@type":"Thing","name":item.name,"alternateName":item.id.replace(/_/g,' ')}}:{"@context":"https://schema.org","@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/","inLanguage":"ko-KR","potentialAction":{"@type":"SearchAction","target":"https://mark-craft-ko.vercel.app/?q={search_term_string}","query-input":"required name=search_term_string"}};
+  const data=item?{
+   "@context":"https://schema.org",
+   "@type":"WebPage",
+   "name":title,
+   "description":description,
+   "url":canonical.href,
+   "inLanguage":"ko-KR",
+   "isPartOf":{"@type":"WebSite","name":"마인크래프트 아이템 조합법","url":"https://mark-craft-ko.vercel.app/"},
+   "breadcrumb":{"@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"홈","item":"https://mark-craft-ko.vercel.app/"},
+    {"@type":"ListItem","position":2,"name":item.name+" 조합법","item":canonical.href}
+   ]},
+   "mainEntity":{"@type":"Thing","name":item.name,"alternateName":[item.id.replace(/_/g,' '),item.id.replace(/_/g,'-')]}
+  }:{
+   "@context":"https://schema.org",
+   "@type":"WebSite",
+   "name":"마인크래프트 아이템 조합법",
+   "alternateName":"마크 조합법",
+   "url":"https://mark-craft-ko.vercel.app/",
+   "inLanguage":"ko-KR",
+   "description":"마인크래프트 아이템별 조합 재료와 제작 방법을 한국어로 검색하고 확인하는 팬 제작 가이드."
+  };
   schema.textContent=JSON.stringify(data);
  }
 }
@@ -231,12 +260,12 @@ function route(){
   if(item&&item.recipeRaw){
    $('home').style.display='none';$('recipePage').classList.add('show');renderRecipe(item);window.scrollTo(0,0);
    const path='/recipe/'+String(item.id).replace(/_/g,'-');
-   updateSeo(item.name+' 조합법 | 마인크래프트 아이템 조합법',item.name+' 조합법을 확인하세요. 필요한 재료와 제작 방법을 한국어로 안내합니다.',path,item);
+   updateSeo(item.name+' 조합법과 재료 | 마인크래프트 제작 방법',item.name+' 조합법을 확인하세요. 마인크래프트 '+item.name+' 제작에 필요한 재료, 개수와 조합대 배치를 한국어로 안내합니다.',path,item);
    return;
   }
  }
  $('home').style.display='block';$('recipePage').classList.remove('show');
- updateSeo('마인크래프트 아이템 조합법','마인크래프트 작업대, 횃불, 화로 등 다양한 아이템 조합법을 검색하고 필요한 재료와 제작 방법을 확인하세요.','/');
+ updateSeo('마인크래프트 조합법 검색 | 아이템 제작 재료·방법 - 마크 조합법','마인크래프트 조합법을 한국어로 검색하세요. 작업대, 곡괭이, 검, 횃불, 화로 등 인기 아이템의 필요한 재료와 제작 배치를 한눈에 확인할 수 있습니다.','/');
 }
 async function fetchJson(url){const r=await fetch(url);if(!r.ok)throw new Error('데이터 요청 실패 '+r.status+' '+url);return r.json()}
 function classify(id){if(/^(wooden|stone|iron|golden|diamond|netherite)_sword$|^(bow|crossbow|trident|mace)$/.test(id))return '무기';if(/^(wooden|stone|iron|golden|diamond|netherite)_(pickaxe|axe|shovel|hoe)$|^(shears|fishing_rod|flint_and_steel|brush|spyglass)$/.test(id))return '도구';if(/^(leather|chainmail|iron|golden|diamond|netherite)_(helmet|chestplate|leggings|boots)$|^(turtle_helmet|shield|elytra)$/.test(id))return '방어구';if(/^(apple|golden_apple|enchanted_golden_apple|bread|beef|cooked_beef|porkchop|cooked_porkchop|chicken|cooked_chicken|carrot|golden_carrot|potato|baked_potato|cookie|cake|pumpkin_pie|beetroot_soup|mushroom_stew|rabbit_stew|salmon|cooked_salmon|cod|cooked_cod|melon_slice|dried_kelp|honey_bottle)$/.test(id))return '식량';if(/^(potion|splash_potion|lingering_potion|tipped_arrow)$/.test(id))return '물약';if(/^(redstone|redstone_|piston$|sticky_piston$|hopper$|observer$|dispenser$|dropper$|lever$|target$|daylight_detector$|tripwire_hook$|repeater$|comparator$|rail$|powered_rail$|detector_rail$|activator_rail$)/.test(id))return '레드스톤';if(/(_planks|_log|_wood|_stem|_hyphae|_block|_bricks|_slab|_stairs|_fence|_fence_gate|_door|_trapdoor|_glass|_pane|_wool)$|^(stone|cobblestone|glass|bricks|crafting_table|furnace|chest|barrel|bookshelf|obsidian|sand|gravel|dirt|grass_block)$/.test(id))return '블록';return '기타'}
